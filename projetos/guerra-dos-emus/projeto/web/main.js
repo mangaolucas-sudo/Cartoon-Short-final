@@ -35,6 +35,7 @@ const M = {
   desk: toon({ color: '#5a3820' }), paperM: toon({ color: '#f4efe0' }), crate: texM(P.planks(5), 1, 1, '#d8b888'), mud: toon({ color: '#7a4a30' }),
   windowL: new THREE.MeshBasicMaterial({ color: '#cfe8ff' }), tank: texM(Q.corrugated(44, [200, 6, 70]), 1, 1), red: toon({ color: '#b8282b' }), gold: toon({ color: '#d9a845' }),
 };
+M.dirt.map.anisotropy = 16; // less shimmer on the ground at grazing angles
 for (const k of ['wheatTop', 'wheatSide', 'tin', 'tinRust', 'board', 'boardB', 'bark', 'panel', 'carpet', 'carpetR', 'tent', 'bags', 'plank', 'plaster', 'crate', 'tank', 'road']) M[k].map.wrapS = M[k].map.wrapT = THREE.RepeatWrapping;
 
 // ---------- ink / normal-depth contract ----------
@@ -123,6 +124,14 @@ const bank = add(new THREE.TorusGeometry(13.8, 1.4, 8, 48), M.mud, DAM[0], 0, DA
 // puddles for the rain
 const puddles = new THREE.Group(); world.add(puddles);
 { const r = P.rng(8); for (let i = 0; i < 40; i++) { const pd = add(new THREE.CircleGeometry(1 + r() * 2.5, 20), waterMat, (r() - 0.3) * 160, 0.03 + i * 0.0004, 30 + r() * 60, puddles, { cast: false }); pd.rotation.x = -Math.PI / 2; pd.scale.y = 0.6; pd.userData.nd = waterNd; } }
+
+// decals: flat surfaces lying on the ground get a polygon offset in BOTH the colour and the
+// normal/depth pass, so they never z-fight with the ground plane (flicker between floors).
+const ndDecal = ndMat.clone();
+const offsetMat = (m) => { m.polygonOffset = true; m.polygonOffsetFactor = -2; m.polygonOffsetUnits = -8; m.needsUpdate = true; };
+offsetMat(ndDecal);
+function decal(mesh) { offsetMat(mesh.material); if (mesh.userData.nd) offsetMat(mesh.userData.nd); else mesh.userData.nd = ndDecal; return mesh; }
+decal(road); decal(dam); puddles.children.forEach(decal);
 
 // wheat fields (boxes whose height grows), north of the fence (z < -10)
 const FIELDS = [[-64, -3, -70, -12], [3, 74, -70, -12], [-64, 74, -150, -76], [-150, -70, -120, -12], [80, 170, -120, -12]];
@@ -296,7 +305,7 @@ add(new THREE.SphereGeometry(0.16, 12, 8), M.lamp, -1.2, 1.4, -2.5, office); add
 // parliament at x=1100
 const PAR = [1100, 0, 0];
 const parl = new THREE.Group(); parl.position.set(...PAR); scene.add(parl);
-add(tbox(24, 0.1, 22, 2), M.carpet, 0, -0.05, 0, parl, { cast: false });
+decal(add(tbox(24, 0.1, 22, 2), M.carpet, 0, -0.03, 0, parl, { cast: false }));
 add(tbox(24, 6, 0.3, 3), M.panel, 0, 3, -10, parl); for (const s of [-1, 1]) add(tbox(0.3, 6, 22, 3), M.panel, s * 12, 3, 0, parl);
 for (const s of [-1, 1]) for (let row = 0; row < 4; row++) {
   const z = s * (2.6 + row * 1.3), y = row * 0.45;
@@ -310,7 +319,7 @@ const STU = [1200, 0, 0];
 const studio = new THREE.Group(); studio.position.set(...STU); scene.add(studio);
 const backMat = new THREE.MeshBasicMaterial({ color: '#e9c46a' }); const floorMat = toon({ color: '#e9c46a' });
 const back = add(new THREE.CylinderGeometry(14, 14, 16, 48, 1, true, -Math.PI * 0.4, Math.PI * 0.8), backMat, 0, 6, 6, studio, { cast: false }); back.material.side = THREE.BackSide; back.rotation.y = Math.PI;
-add(new THREE.PlaneGeometry(40, 40), floorMat, 0, 0.02, 0, studio, { cast: false }).rotation.x = -Math.PI / 2;
+decal(add(new THREE.PlaneGeometry(40, 40), floorMat, 0, 0.02, 0, studio, { cast: false })).rotation.x = -Math.PI / 2;
 const studioRays = add(new THREE.CircleGeometry(30, 24), new THREE.MeshBasicMaterial({ map: P.tex((() => { const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); for (let i = 0; i < 24; i++) { g.fillStyle = i % 2 ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,0)'; g.beginPath(); g.moveTo(256, 256); g.arc(256, 256, 400, i / 24 * 6.283, (i + 1) / 24 * 6.283); g.fill(); } return c; })()), transparent: true, depthWrite: false }), 0, 6, -7.8, studio, { cast: false });
 studioRays.userData.ndSkip = true;
 
@@ -416,8 +425,12 @@ function applyLight(L) {
 function placeSun(L, focus) {
   const az = rx(L.az), el = rx(L.el); tmpV.set(Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az));
   skyU.sunDir.value.copy(tmpV);
-  sun.position.copy(focus).addScaledVector(tmpV, 80); sun.target.position.copy(focus);
-  const ext = L.shadowExt || 30, sc = sun.shadow.camera; sc.left = -ext; sc.right = ext; sc.top = ext; sc.bottom = -ext; sc.near = 1; sc.far = 220; sc.updateProjectionMatrix();
+  const ext = L.shadowExt || 30, tx = 2 * ext / sun.shadow.mapSize.x;
+  // snap the shadow centre to whole shadow-map texels so shadows don't swim when the camera drifts
+  const fw = tmpV.clone().normalize(), rt = new THREE.Vector3(0, 1, 0).cross(fw).normalize(), up = fw.clone().cross(rt);
+  const sf = new THREE.Vector3().addScaledVector(rt, Math.round(focus.dot(rt) / tx) * tx).addScaledVector(up, Math.round(focus.dot(up) / tx) * tx).addScaledVector(fw, focus.dot(fw));
+  sun.position.copy(sf).addScaledVector(tmpV, 80); sun.target.position.copy(sf);
+  const sc = sun.shadow.camera; sc.left = -ext; sc.right = ext; sc.top = ext; sc.bottom = -ext; sc.near = 1; sc.far = 220; sc.updateProjectionMatrix();
 }
 const drawPrice = (k) => { const g = priceB.g, w = 640, h = 427; Q.chalk(g, w, h, (g) => {
   g.font = '900 46px Arial Black'; g.textAlign = 'center'; g.fillText('PREÇO DO TRIGO', w / 2, 80);

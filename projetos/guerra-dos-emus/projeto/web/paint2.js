@@ -7,7 +7,7 @@ export const INKC = '#241726';
 export function redDirt(seed = 21) {
   const [c, g] = cv(512, 512), r = rng(seed);
   g.fillStyle = '#c07a4a'; g.fillRect(0, 0, 512, 512);
-  for (let i = 0; i < 900; i++) { g.fillStyle = hsl(18 + r() * 14, 45 + r() * 15, 44 + r() * 16, 0.5); g.beginPath(); g.ellipse(r() * 512, r() * 512, 2 + r() * 14, 1 + r() * 6, r() * 3, 0, 7); g.fill(); }
+  for (let i = 0; i < 900; i++) { g.fillStyle = hsl(18 + r() * 14, 45 + r() * 12, 46 + r() * 10, 0.4); g.beginPath(); g.ellipse(r() * 512, r() * 512, 2 + r() * 14, 1 + r() * 6, r() * 3, 0, 7); g.fill(); }
   for (let i = 0; i < 120; i++) { g.fillStyle = hsl(60 + r() * 20, 30, 40 + r() * 10, 0.6); const x = r() * 512, y = r() * 512; for (let k = 0; k < 5; k++) { g.fillRect(x + k * 2, y - r() * 8, 1.5, 8); } }
   for (let i = 0; i < 40; i++) { g.fillStyle = 'rgba(90,40,20,.35)'; g.beginPath(); g.ellipse(r() * 512, r() * 512, 3 + r() * 4, 2 + r() * 3, 0, 0, 7); g.fill(); }
   return c;
