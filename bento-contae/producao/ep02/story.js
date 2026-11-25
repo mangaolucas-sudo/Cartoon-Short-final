@@ -281,25 +281,26 @@ export const SHOTS = {
     });
     // dedo tocando
     const tap = clamp(1 - Math.abs(T.t - ta) / 0.3);
-    within(c, 640 + (1 - E.out(ramp(T.t, ta - 0.5, ta))) * 300, 740 + (1 - E.out(ramp(T.t, ta - 0.5, ta))) * 500, 0, 1 - tap * 0.12, (c) => { box(c, -24, -10, 48, 150, 24, BRUNO.skin, 8); ellipse(c, 0, 170, 70, 80, BRUNO.skin, 8); });
+    if (T.t > ta - 0.55) within(c, 640 + (1 - E.out(ramp(T.t, ta - 0.5, ta))) * 300, 740 + (1 - E.out(ramp(T.t, ta - 0.5, ta))) * 500, 0, 1 - tap * 0.12, (c) => { box(c, -24, -10, 48, 150, 24, BRUNO.skin, 8); ellipse(c, 0, 170, 70, 80, BRUNO.skin, 8); box(c, -70, 230, 140, 400, 30, BRUNO.shirt, 8); });
+    if (tap > 0.6) for (let i = 0; i < 3; i++) sparkle(c, 560 + i * 60, 720 - i * 30, 0.5, T.t * 3 + i);
   },
   s23(c, T) {
     bgBurst(c, T.g);
     const ts = T.find(/contae/), press = clamp(1 - Math.abs(T.t - ts - 0.15) / 0.15);
     person(c, BENTO, { x: 540, y: 1880, s: 0.98, t: T.g, pose: 'wave', expr: 'smile', talk: 0.6 });
     const followed = T.t > ts + 0.25;
-    within(c, 540, 520, 0, pop(T.t, ts - 0.4) * (1 - press * 0.12), (c) => {
+    within(c, 540, 520, 0, pop(T.t, 0.1) * (1 - press * 0.12), (c) => {
       box(c, -260, -70, 520, 140, 70, followed ? '#9a9da5' : C.red, 11);
       stroked(c, followed ? 'SEGUINDO ✓' : 'SEGUIR', 0, 4, { size: 84, fill: '#fff', lw: 12 });
     });
     text(c, '@BentoContaê', 540, 680, { size: 60, font: FONT_CAP, fill: '#fff' });
   },
   s24(c, T) {
-    const k = E.inout(ramp(T.t, 0, T.dur - 0.9));
+    const tc = T.find(/calcada/), k = E.inout(ramp(T.t, 0, tc));
     bgStreet(c, T.g, { offset: (1 - k) * 500 });
-    const stop = T.t > T.dur - 0.9;
-    const tl = ramp(T.t, T.dur - 0.8, T.dur - 0.4);
-    if (T.t > T.dur - 0.7) wallet(c, 700, 1800, 0.65, 0.2, { open: 0, notes: 0 });
+    const stop = T.t > tc;
+    const tl = ramp(T.t, tc, tc + 0.4);
+    if (T.t > tc - 0.3) { wallet(c, 760, 1800, 0.65, 0.2, { open: 0, notes: 0 }); if (T.t > T.find('novo') - 0.1) sparkle(c, 820, 1740, 0.6 * (0.7 + 0.3 * Math.sin(T.t * 10)), T.t * 2); }
     person(c, BRUNO, { x: lerp(200, 540, k), y: 1840, s: 1.04, t: T.g, pose: 'walk', walk: stop ? 0 : T.t * 1.6, expr: tl > 0.5 ? 'surprised' : 'smile', look: tl * 0.6, lookY: tl, nod: tl });
   },
 };
@@ -332,4 +333,31 @@ export const CUES = [
   { shot: 's22', word: 'amigo', sfx: 'tap' },
   { shot: 's23', word: 'segue', off: 0.15, sfx: 'tap' }, { shot: 's23', word: 'segue', off: 0.25, sfx: 'ding' },
   { shot: 's24', at: -0.9, sfx: 'boing' },
+];
+
+// capas (thumbnail do Short): 1080x1920, o centro 1080x1080 precisa funcionar sozinho no feed
+const coverTitle = (c, l1, l2, y = 330, col2 = C.yellow) => { stroked(c, l1, W / 2, y, { size: 150, fill: '#fff', lw: 24, maxW: 1000 }); if (l2) stroked(c, l2, W / 2, y + 165, { size: 165, fill: col2, lw: 26, maxW: 1000 }); };
+export const COVERS = [
+  (c) => { // 1: o achado
+    bgStreet(c, 3);
+    person(c, BRUNO, { x: 540, y: 2050, s: 1.45, t: 0.3, pose: 'holdUp', expr: 'surprised', look: 0.5, blink: 0, hold: (c) => wallet(c, 20, -60, 0.95, 0.1) });
+    for (let i = 0; i < 5; i++) sparkle(c, 740 + Math.cos(i * 1.3) * 200, 1150 + Math.sin(i * 1.9) * 170, 0.8, i);
+    card(c, 540, 860, 1, 'R$ 2.000', '', { titleCol: '#2c8a4a', size: 140, w: 600, rot: -0.04 });
+    coverTitle(c, 'ACHOU?', 'É SEU?', 430);
+    badge(c);
+  },
+  (c) => { // 2: a consequência
+    bgRoom(c, 3);
+    person(c, OFICIAL, { x: 270, y: 1960, s: 1.12, t: 0.3, pose: 'give', expr: 'angry', look: 1, blink: 0, hold: (c) => doc(c, 40, -40, 0.85, -0.08, 'INTIMAÇÃO') });
+    person(c, BRUNO, { x: 800, y: 1960, s: 1.12, t: 0.3, pose: 'handsHead', expr: 'shock', look: -0.8, blink: 0 });
+    coverTitle(c, 'ACHADO', 'VIROU PROCESSO', 470, C.red);
+    badge(c);
+  },
+  (c) => { // 3: a lei
+    bgBurst(c, 2);
+    person(c, BENTO, { x: 380, y: 1980, s: 1.25, t: 0.3, pose: 'point', expr: 'angry', blink: 0 });
+    card(c, 700, 760, 1, 'ART. 169', 'CÓDIGO PENAL', { size: 130, w: 520, rot: 0.03 });
+    coverTitle(c, '"ACHADO NÃO', 'É ROUBADO"?', 300, '#fff');
+    stamp(c, 600, 1480, 1.2, 'NÃO É LEI', { size: 130, rot: -0.12 });
+  },
 ];

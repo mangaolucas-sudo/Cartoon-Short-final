@@ -1,0 +1,376 @@
+{
+ "duration": 87.170563,
+ "frames30": 2615,
+ "source": "silence-align (cost 3.95)",
+ "segments": [
+  [
+   0.0,
+   3.48959
+  ],
+  [
+   3.93204,
+   4.83018
+  ],
+  [
+   5.14902,
+   5.85379
+  ],
+  [
+   6.30853,
+   6.95921
+  ],
+  [
+   7.33991,
+   8.75234
+  ],
+  [
+   9.19082,
+   10.116
+  ],
+  [
+   10.3153,
+   13.2234
+  ],
+  [
+   13.598,
+   15.5136
+  ],
+  [
+   15.7492,
+   17.6389
+  ],
+  [
+   18.0305,
+   19.6425
+  ],
+  [
+   19.9897,
+   21.7382
+  ],
+  [
+   22.1304,
+   25.4657
+  ],
+  [
+   25.8194,
+   27.1986
+  ],
+  [
+   27.4344,
+   28.2765
+  ],
+  [
+   28.6828,
+   31.5586
+  ],
+  [
+   31.9809,
+   32.9285
+  ],
+  [
+   33.0787,
+   34.1521
+  ],
+  [
+   34.5634,
+   36.0377
+  ],
+  [
+   36.4,
+   38.1735
+  ],
+  [
+   38.3049,
+   38.683
+  ],
+  [
+   38.8661,
+   39.437
+  ],
+  [
+   39.7773,
+   42.946
+  ],
+  [
+   43.3246,
+   46.6736
+  ],
+  [
+   46.8949,
+   49.2027
+  ],
+  [
+   49.5693,
+   51.5883
+  ],
+  [
+   51.7761,
+   52.3383
+  ],
+  [
+   52.7022,
+   55.56
+  ],
+  [
+   55.8876,
+   57.7687
+  ],
+  [
+   58.1025,
+   59.5315
+  ],
+  [
+   59.7056,
+   61.5272
+  ],
+  [
+   61.8553,
+   63.5843
+  ],
+  [
+   63.8115,
+   64.6879
+  ],
+  [
+   64.9313,
+   65.7256
+  ],
+  [
+   65.8887,
+   66.7286
+  ],
+  [
+   67.0879,
+   67.8625
+  ],
+  [
+   68.1664,
+   70.5786
+  ],
+  [
+   70.9449,
+   72.516
+  ],
+  [
+   72.8606,
+   74.2558
+  ],
+  [
+   74.6001,
+   78.3655
+  ],
+  [
+   78.6967,
+   80.093
+  ],
+  [
+   80.3141,
+   82.1747
+  ],
+  [
+   82.5861,
+   84.7532
+  ],
+  [
+   84.9925,
+   86.9214
+  ]
+ ],
+ "phrases": [
+  {
+   "text": "O Bruno achou uma carteira com dois mil reais na cal\u00e7ada.",
+   "s": 0.0,
+   "e": 3.49
+  },
+  {
+   "text": "Olhou pros lados.",
+   "s": 3.932,
+   "e": 4.83
+  },
+  {
+   "text": "Ningu\u00e9m viu.",
+   "s": 5.149,
+   "e": 5.854
+  },
+  {
+   "text": "E ele pensou:",
+   "s": 6.309,
+   "e": 6.959
+  },
+  {
+   "text": "achado n\u00e3o \u00e9 roubado.",
+   "s": 7.34,
+   "e": 8.752
+  },
+  {
+   "text": "Tirou as notas,",
+   "s": 9.191,
+   "e": 10.116
+  },
+  {
+   "text": "jogou a carteira no lixo e foi direto pro shopping. Comprou um t\u00eanis,",
+   "s": 10.315,
+   "e": 13.223
+  },
+  {
+   "text": "um fone novo e ainda pagou o churrasco da galera.",
+   "s": 13.598,
+   "e": 17.639
+  },
+  {
+   "text": "No grupo da fam\u00edlia, mandou foto:",
+   "s": 18.03,
+   "e": 19.642
+  },
+  {
+   "text": "\"hoje o dia t\u00e1 aben\u00e7oado\".",
+   "s": 19.99,
+   "e": 21.738
+  },
+  {
+   "text": "S\u00f3 que dentro daquela carteira tinha o RG do dono.",
+   "s": 22.13,
+   "e": 25.466
+  },
+  {
+   "text": "E bem naquela esquina,",
+   "s": 25.819,
+   "e": 27.199
+  },
+  {
+   "text": "tinha uma c\u00e2mera.",
+   "s": 27.434,
+   "e": 28.276
+  },
+  {
+   "text": "O dono registrou boletim de ocorr\u00eancia no mesmo dia.",
+   "s": 28.683,
+   "e": 31.559
+  },
+  {
+   "text": "Um m\u00eas depois,",
+   "s": 31.981,
+   "e": 32.928
+  },
+  {
+   "text": "chegou uma intima\u00e7\u00e3o.",
+   "s": 33.079,
+   "e": 34.152
+  },
+  {
+   "text": "Calma, que o Bento conta.",
+   "s": 34.563,
+   "e": 36.038
+  },
+  {
+   "text": "Achado n\u00e3o \u00e9 roubado \u00e9 ditado.",
+   "s": 36.4,
+   "e": 38.683
+  },
+  {
+   "text": "N\u00e3o \u00e9 lei.",
+   "s": 38.866,
+   "e": 39.437
+  },
+  {
+   "text": "A lei \u00e9 o artigo cento e sessenta e nove do C\u00f3digo Penal.",
+   "s": 39.777,
+   "e": 42.946
+  },
+  {
+   "text": "Quem acha uma coisa perdida e n\u00e3o devolve em quinze dias comete apropria\u00e7\u00e3o de coisa achada.",
+   "s": 43.325,
+   "e": 49.203
+  },
+  {
+   "text": "Pena de at\u00e9 um ano de deten\u00e7\u00e3o,",
+   "s": 49.569,
+   "e": 51.588
+  },
+  {
+   "text": "ou multa.",
+   "s": 51.776,
+   "e": 52.338
+  },
+  {
+   "text": "E o Bruno ainda teve que devolver os dois mil reais.",
+   "s": 52.702,
+   "e": 55.56
+  },
+  {
+   "text": "Mas a parte mais ir\u00f4nica \u00e9 essa:",
+   "s": 55.888,
+   "e": 57.769
+  },
+  {
+   "text": "se ele tivesse devolvido,",
+   "s": 58.102,
+   "e": 59.532
+  },
+  {
+   "text": "a lei garantia uma recompensa.",
+   "s": 59.706,
+   "e": 61.527
+  },
+  {
+   "text": "No m\u00ednimo, cinco por cento.",
+   "s": 61.855,
+   "e": 63.584
+  },
+  {
+   "text": "Cem reais.",
+   "s": 63.812,
+   "e": 64.688
+  },
+  {
+   "text": "Limpinhos.",
+   "s": 64.931,
+   "e": 65.726
+  },
+  {
+   "text": "Sem processo.",
+   "s": 65.889,
+   "e": 66.729
+  },
+  {
+   "text": "Achou carteira?",
+   "s": 67.088,
+   "e": 67.862
+  },
+  {
+   "text": "Devolve pro dono ou entrega na delegacia.",
+   "s": 68.166,
+   "e": 70.579
+  },
+  {
+   "text": "Achado n\u00e3o \u00e9 roubado\u2026 mas pode virar processo.",
+   "s": 70.945,
+   "e": 74.256
+  },
+  {
+   "text": "Manda esse v\u00eddeo pra aquele amigo que vive falando \"achado n\u00e3o \u00e9 roubado\".",
+   "s": 74.6,
+   "e": 78.365
+  },
+  {
+   "text": "E segue o Bento Conta\u00ea,",
+   "s": 78.697,
+   "e": 80.093
+  },
+  {
+   "text": "que a pr\u00f3xima hist\u00f3ria pode ser a sua.",
+   "s": 80.314,
+   "e": 82.175
+  },
+  {
+   "text": "Uma semana depois, voltando pra casa,",
+   "s": 82.586,
+   "e": 84.753
+  },
+  {
+   "text": "o Bruno olhou pra cal\u00e7ada de novo\u2026",
+   "s": 84.993,
+   "e": 86.921
+  }
+ ]
+}

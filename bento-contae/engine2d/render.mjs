@@ -13,6 +13,11 @@ await pg.goto(`http://localhost:${srv.address().port}/engine2d/index.html?ep=/${
 await pg.waitForFunction(() => window.ready || window.err, null, { timeout: 60000 });
 if (await pg.evaluate(() => window.err)) { console.log('erro na página'); process.exit(1); }
 const total = await pg.evaluate(() => window.TOTAL);
+if (spec === 'covers') {
+  const n = await pg.evaluate(() => window.COVERS);
+  for (let i = 0; i < n; i++) { const d = await pg.evaluate((i) => { window.renderCover(i); return document.getElementById('c').toDataURL('image/png'); }, i); fs.writeFileSync(path.join(outdir, `capa_${i + 1}.png`), Buffer.from(d.split(',')[1], 'base64')); }
+  console.log(`ok ${n} capas`); await b.close(); srv.close(); process.exit(0);
+}
 let frames = [];
 const sp = spec === 'all' ? `0-${total - 1}` : spec;
 for (const part of sp.split(',')) { if (part.includes('-')) { const [a, z] = part.split('-').map(Number); for (let f = a; f <= z; f += +step) frames.push(f); } else frames.push(+part); }
