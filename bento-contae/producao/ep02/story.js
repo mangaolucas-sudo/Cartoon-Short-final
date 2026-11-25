@@ -335,29 +335,28 @@ export const CUES = [
   { shot: 's24', at: -0.9, sfx: 'boing' },
 ];
 
-// capas (thumbnail do Short): 1080x1920, o centro 1080x1080 precisa funcionar sozinho no feed
-const coverTitle = (c, l1, l2, y = 330, col2 = C.yellow) => { stroked(c, l1, W / 2, y, { size: 150, fill: '#fff', lw: 24, maxW: 1000 }); if (l2) stroked(c, l2, W / 2, y + 165, { size: 165, fill: col2, lw: 26, maxW: 1000 }); };
+// capas (thumbnail do Short) — layout do EP 01: frase em cima, cartão de valor, personagem inteiro, selo grande
+function coverLayout(c, l1, l2) {
+  c.save(); c.filter = 'blur(5px)'; bgStreet(c, 3); c.restore();
+  const g = c.createLinearGradient(0, 0, 0, 700); g.addColorStop(0, 'rgba(40,25,10,0.55)'); g.addColorStop(1, 'rgba(40,25,10,0)'); c.fillStyle = g; c.fillRect(0, 0, W, 700);
+  // personagem: carteira aberta com dinheiro na mão
+  person(c, BRUNO, { x: 540, y: 1890, s: 1.1, t: 0.3, pose: 'holdUp', expr: 'surprised', look: 0.35, blink: 0, hold: (c) => wallet(c, 40, 45, 0.95, 0.12) });
+  for (let i = 0; i < 4; i++) sparkle(c, 860 + Math.cos(i * 1.6) * 130, 1250 + Math.sin(i * 1.6) * 110, 0.75, i);
+  // cartão de valor acima da cabeça
+  within(c, 540, 700, 0, 1, (c) => {
+    box(c, -400, -110, 800, 220, 50, 'rgba(0,0,0,0.25)', 0); box(c, -412, -122, 824, 230, 50, C.paper, 14);
+    within(c, -280, -8, 0, 0.62, (c) => wallet(c, 0, 0, 1, 0, { notes: 0.7 }));
+    text(c, 'Achou na calçada', -150, -42, { size: 62, align: 'left', fill: C.ink });
+    text(c, 'R$ 2.000,00', -150, 40, { size: 80, align: 'left', fill: '#1f8f6b' });
+  });
+  // frase em cima
+  within(c, 540, 0, -0.03, 1, (c) => { stroked(c, l1, 0, 300, { size: 160, fill: '#fff', lw: 34, maxW: 960 }); stroked(c, l2, 0, 460, { size: 175, fill: C.yellow, lw: 36, maxW: 1000 }); });
+  // selo grande
+  c.font = `64px ${FONT_UI}`; const bw = c.measureText('FICÇÃO · SITUAÇÃO REAL').width + 110;
+  box(c, W / 2 - bw / 2, 1470, bw, 104, 52, C.blue, 13); text(c, 'FICÇÃO · SITUAÇÃO REAL', W / 2, 1524, { size: 64, fill: '#fff' });
+}
 export const COVERS = [
-  (c) => { // 1: o achado
-    bgStreet(c, 3);
-    person(c, BRUNO, { x: 540, y: 2050, s: 1.45, t: 0.3, pose: 'holdUp', expr: 'surprised', look: 0.5, blink: 0, hold: (c) => wallet(c, 20, -60, 0.95, 0.1) });
-    for (let i = 0; i < 5; i++) sparkle(c, 740 + Math.cos(i * 1.3) * 200, 1150 + Math.sin(i * 1.9) * 170, 0.8, i);
-    card(c, 540, 860, 1, 'R$ 2.000', '', { titleCol: '#2c8a4a', size: 140, w: 600, rot: -0.04 });
-    coverTitle(c, 'ACHOU?', 'É SEU?', 430);
-    badge(c);
-  },
-  (c) => { // 2: a consequência
-    bgRoom(c, 3);
-    person(c, OFICIAL, { x: 270, y: 1960, s: 1.12, t: 0.3, pose: 'give', expr: 'angry', look: 1, blink: 0, hold: (c) => doc(c, 40, -40, 0.85, -0.08, 'INTIMAÇÃO') });
-    person(c, BRUNO, { x: 800, y: 1960, s: 1.12, t: 0.3, pose: 'handsHead', expr: 'shock', look: -0.8, blink: 0 });
-    coverTitle(c, 'ACHADO', 'VIROU PROCESSO', 470, C.red);
-    badge(c);
-  },
-  (c) => { // 3: a lei
-    bgBurst(c, 2);
-    person(c, BENTO, { x: 380, y: 1980, s: 1.25, t: 0.3, pose: 'point', expr: 'angry', blink: 0 });
-    card(c, 700, 760, 1, 'ART. 169', 'CÓDIGO PENAL', { size: 130, w: 520, rot: 0.03 });
-    coverTitle(c, '"ACHADO NÃO', 'É ROUBADO"?', 300, '#fff');
-    stamp(c, 600, 1480, 1.2, 'NÃO É LEI', { size: 130, rot: -0.12 });
-  },
+  (c) => coverLayout(c, 'ACHOU 2 MIL', 'NA CALÇADA!'),
+  (c) => coverLayout(c, 'ACHOU? É SEU?', 'CUIDADO!'),
+  (c) => coverLayout(c, 'ACHADO NÃO É', 'ROUBADO?'),
 ];
