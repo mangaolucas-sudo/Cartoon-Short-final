@@ -72,27 +72,34 @@ Selo fixo no topo: **FICÇÃO · SITUAÇÃO REAL**. Legenda palavra por palavra,
 **Áudio:** a trilha fica a ~50% da voz, com *whoosh* nos cortes, *plof* no lixo, sirene curta na intimação, *ding* no 5% e caixa registradora no R$ 100. A música para em "a parte mais irônica" e volta em "Cem reais".
 
 ## SEO / publicação
+*(revisado depois da varredura de concorrentes — ver `pesquisa/2026-11-concorrentes.md`)*
 
-**Título (escolha 1, ≤ 60 caracteres):**
-1. `Achado não é roubado? A lei diz outra coisa` ← recomendado (frase mais buscada + curiosidade)
-2. `Achou uma carteira na rua? Ficar com ela é CRIME`
-3. `Ele achou R$ 2 mil na rua e se deu mal`
+**Título (escolha 1, ≤ 50 caracteres):**
+1. `😱 Ele Achou R$ 2 Mil na Rua e Virou Réu` ← recomendado. Segue o padrão "emoji + história" dos canais de animação que mais crescem e tem número concreto.
+2. `Achou dinheiro na rua? Ficar com ele é CRIME 😱`. Segue o padrão "pergunta de pode?" dos advogados e serve bem à busca.
+3. `Achado não é roubado? A lei discorda 😱`
 
-**Descrição:**
+Evite o título exato "Achado não é roubado": o Vida Animada já tem um vídeo animado com esse nome e 2,1 mi de views.
+
+**Descrição (modelo pergunta → caso → base legal → aviso):**
 ```
-Achado não é roubado? Não é bem assim. O Bruno achou uma carteira com R$ 2.000 na rua, ficou com o dinheiro… e um mês depois chegou uma intimação.
+Achou dinheiro na rua e ficou com ele? Isso pode ser crime. 😱
 
-Pelo artigo 169 do Código Penal, quem acha algo perdido e não devolve em 15 dias comete apropriação de coisa achada (pena de até 1 ano de detenção ou multa). E se devolver, o Código Civil (art. 1.234) garante recompensa mínima de 5%.
+O Bruno achou uma carteira com R$ 2.000 na calçada, pensou "achado não é roubado", gastou tudo… e um mês depois chegou uma intimação.
 
-📌 História fictícia baseada em situação real. Conteúdo informativo, não é aconselhamento jurídico.
+O que diz a lei:
+⚖️ Código Penal, art. 169, parágrafo único, II: quem acha coisa perdida e não devolve ao dono ou não entrega à autoridade em 15 dias comete apropriação de coisa achada. Pena: detenção de 1 mês a 1 ano, ou multa.
+💰 Código Civil, art. 1.234: quem devolve tem direito a recompensa de no mínimo 5% do valor.
+
+📌 História fictícia baseada em situação real. Conteúdo informativo, não substitui consulta com advogado.
 👉 Você devolveria? Comenta aí.
-Parte 1: Pix errado não é presente.
+▶️ Episódio anterior: Pix errado não é presente.
 
-#shorts #achadonaoeroubado #direito
+#shorts #historia #direito #achadonaoeroubado #crime
 ```
 
-**Tags:**
-`achado não é roubado, achei uma carteira, achei dinheiro na rua, carteira perdida, apropriação de coisa achada, artigo 169 código penal, é crime ficar com coisa achada, recompensa coisa achada, artigo 1234 código civil, achei dinheiro o que fazer, pix errado, direito no dia a dia, curiosidades da lei, bento contaê`
+**Tags (8–12, peso baixo):**
+`achei dinheiro na rua, achado não é roubado, apropriação de coisa achada, artigo 169 código penal, achei uma carteira o que fazer, é crime ficar com dinheiro achado, recompensa coisa achada, direito no dia a dia, história animada, bento contaê`
 
 **Comentário fixado:** `Você devolveria os R$ 2 mil? 👇 Responde com 💰 (ficava) ou 🤝 (devolvia)`
 

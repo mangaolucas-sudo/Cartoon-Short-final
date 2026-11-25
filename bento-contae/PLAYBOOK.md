@@ -27,6 +27,7 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 | 8. CTA | 62–66 s | **Compartilhar > seguir.** "Manda pra aquele amigo que…" + "segue o Bento Contaê". |
 | 9. Loop | últimos 3 s | A frase fica em suspenso e leva de volta ao gancho. Não há tela final: corte 0,2 s depois da última palavra. |
 
+- **Duração:** 60–90 s. Os canais de história animada que mais crescem ficam em 90–150 s, então vale testar um episódio de ~110 s.
 - **Ritmo:** ~3,2 palavras/s → 60 s ≈ 190 palavras, 75 s ≈ 240, 90 s ≈ 285.
 - **Corte de cena:** a cada 2–3 s, no máximo. Algo sempre se mexe.
 - **Música:** ~50% da voz. Ela para na virada irônica e volta na resposta.
@@ -39,14 +40,26 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 3. Mantenha a música contínua entre o fim e o começo, sem fade-out.
 
 ## Checklist de SEO (todo vídeo)
-- [ ] **Título ≤ 60 caracteres** com a frase que o público digita na busca ("achado não é roubado", "pix errado") + curiosidade.
+*Base: varredura de 25/11/2026 (`pesquisa/2026-11-concorrentes.md`). Refaça a varredura a cada ~2 meses.*
+
+- [ ] **Título ≤ 50 caracteres** em um dos dois padrões que mais performam:
+  - história com emoji: `😱 Ele Achou R$ 2 Mil na Rua e Virou Réu`
+  - pergunta de "pode?": `Achou dinheiro na rua? Ficar com ele é CRIME 😱`
+- [ ] Nunca use o título exato de um vídeo grande que já existe. Procure no YouTube antes.
 - [ ] A **palavra-chave falada nos primeiros 10 s** (o YouTube transcreve o áudio) e escrita na legenda.
-- [ ] **Descrição:** 1ª linha = palavra-chave + resumo da história, 2ª = a lei com número de artigo, depois o aviso "história fictícia, conteúdo informativo, não é aconselhamento jurídico", uma pergunta pros comentários e o link pro episódio anterior da série.
-- [ ] **3 hashtags:** `#shorts` + palavra-chave + tema (`#direito`).
-- [ ] **Tags:** 10–15. Variações da busca, número do artigo, "o que fazer", tema da série e nome do canal.
+- [ ] **Descrição no modelo pergunta → caso → base legal → aviso:** a pergunta que a pessoa busca, o caso em 1–2 frases sem entregar o final, "O que diz a lei" com os artigos, o aviso de ficção / não é aconselhamento jurídico, uma pergunta pros comentários e o link do episódio anterior.
+- [ ] **Hashtags (3–6):** `#shorts #historia #direito` + 1–2 do tema.
+- [ ] **Tags:** 8–12, rápidas. Pesam pouco: a maioria dos canais grandes nem usa.
 - [ ] **Comentário fixado** com pergunta de resposta fácil (emoji A ou B).
 - [ ] **Capa** escolhida no app: personagem + objeto + 3 palavras.
 - [ ] Vídeo relacionado apontando pro episódio anterior/seguinte da série.
+
+## Posicionamento (o que nos diferencia)
+- Os advogados (Eduardo Bitencourt, Julio Criminalista, Direito em Sessenta) explicam a lei **falando pra câmera**.
+- Os canais de animação (Vida Animada, His story fens, movi her story) contam **histórias sem lei**.
+- **O Bento Contaê junta as duas coisas: a lei contada como história animada com reviravolta.** Esse é o espaço vazio.
+- Personagens fixos criam vínculo (Vida Animada), então **dê nome ao advogado de bigode** e use-o em todo episódio.
+- Série com nome fixo funciona (o "É crime ou não é?" do Curiosonauta faz 120–200 mil por vídeo), então coloque o selo da série na capa.
 
 ## Checagem de fatos (obrigatória no formato A)
 - Confira o artigo de lei e a pena em fonte jurídica antes de gravar.
@@ -57,7 +70,7 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 - [x] EP 01 — Pix errado (CP art. 169)
 - [x] EP 02 — Carteira achada (CP art. 169, par. ún., II + CC art. 1.234)
 - [ ] Carro arrombado no estacionamento ("não nos responsabilizamos" — Súmula 130 STJ)
-- [ ] Preço da prateleira x caixa (Lei 10.962/2004: vale o menor)
+- [ ] Preço da prateleira x caixa (Lei 10.962/2004: vale o menor. **Ressalva:** erro grosseiro não obriga a loja. Tema quente: Bitencourt fez 936 mil em 12 dias)
 - [ ] Comanda perdida / consumação mínima (CDC art. 39)
 - [ ] Cartão de crédito que ninguém pediu (Súmula 532 STJ)
 - [ ] Arrependimento de compra online (CDC art. 49 — 7 dias)
