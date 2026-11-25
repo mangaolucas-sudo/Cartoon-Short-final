@@ -1,4 +1,3 @@
-work/frames/
-work/*.wav
-work/*.mp4
-out/
+**/work/frames/
+**/work/*.wav
+**/out/
