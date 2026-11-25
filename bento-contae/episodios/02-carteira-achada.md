@@ -124,3 +124,13 @@ O que diz a lei:
 | Tráfego vindo da busca (%) | | |
 
 **O que aprendi:**
+
+## Publicação final (capa 1: "ACHOU 2 MIL / NA CALÇADA!")
+
+### YouTube Shorts
+- **Título:** `😱 Ele Achou R$ 2 Mil na Rua e Virou Réu`
+- **Descrição, hashtags e tags:** como na seção "SEO / publicação" acima.
+
+### TikTok
+- **Legenda:** ver o texto entregue no chat (gancho + lei em 1 linha + pergunta + 5 hashtags).
+- **Capa:** a mesma capa 1, com o texto da capa já embutido na imagem.
