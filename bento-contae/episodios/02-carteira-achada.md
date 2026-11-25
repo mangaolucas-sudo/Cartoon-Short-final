@@ -20,6 +20,7 @@ E bem naquela esquina, tinha uma câmera.
 O dono registrou boletim de ocorrência no mesmo dia.
 Um mês depois, chegou uma intimação.
 
+Calma, que o Bento conta.
 Achado não é roubado é ditado. Não é lei.
 A lei é o artigo cento e sessenta e nove do Código Penal.
 Quem acha uma coisa perdida e não devolve em quinze dias comete apropriação de coisa achada.
@@ -57,7 +58,7 @@ Selo fixo no topo: **FICÇÃO · SITUAÇÃO REAL**. Legenda palavra por palavra,
 | 7 | "RG do dono / câmera" | Zoom no RG dentro do lixo, depois câmera na esquina com o LED vermelho piscando. | Rua |
 | 8 | "boletim de ocorrência" | Cartão **B.O. REGISTRADO**. | Bege |
 | 9 | "Um mês depois…" | Cartão **1 MÊS DEPOIS** + oficial entregando a **INTIMAÇÃO** (mesmo personagem do Pix). | Casa |
-| 10 | "ditado. Não é lei." | O advogado de bigode aparece. Cartão "ACHADO NÃO É ROUBADO" levando um carimbo **NÃO É LEI**. | Laranja com raios |
+| 10 | "Calma, que o Bento conta. / ditado. Não é lei." | O **Dr. Bento** entra com *whoosh* e o nome na tela. Cartão "ACHADO NÃO É ROUBADO" levando um carimbo **NÃO É LEI**. | Laranja com raios |
 | 11 | "artigo 169…" | Cartão **ART. 169 · CÓDIGO PENAL**. | Laranja |
 | 12 | "quinze dias" | Calendário com 15 dias riscados. | Laranja |
 | 13 | "até um ano…" | Cartão **ATÉ 1 ANO DE DETENÇÃO OU MULTA**. | Laranja |

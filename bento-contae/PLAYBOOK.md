@@ -6,7 +6,10 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 
 ### A. Ficção · Situação Real (ref.: EP 01 Pix errado)
 - 2D chapado, selo **FICÇÃO · SITUAÇÃO REAL** no topo e legenda palavra por palavra (caixa alta, palavras-chave em amarelo).
-- O elenco é fixo e vira marca: o protagonista comum (Rafael, Bruno…), o **advogado de bigode** (fundo laranja com raios) e o oficial da intimação.
+- O elenco é fixo e vira marca:
+  - o protagonista comum, que muda a cada episódio (Rafael, Bruno, Júlia…);
+  - o **Dr. Bento**, o advogado de bigode que é a "voz" do canal, com fundo laranja com raios e o nome na tela na primeira aparição. Ele entra sempre com o bordão **"Calma, que o Bento conta."** e depois vira a frase popular ao contrário: "X é ditado/placa/costume. Não é lei.";
+  - o oficial da intimação.
 - As cores contam a história: **bege** = vida normal, **laranja** = a lei, **verde** = a solução.
 
 ### B. História Absurda Que Deu Certo (ref.: Torre de Pisa, Rei do Gelo)
@@ -69,7 +72,7 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 ## Banco de pautas — série "Achado não é seu" e direitos do dia a dia
 - [x] EP 01 — Pix errado (CP art. 169)
 - [x] EP 02 — Carteira achada (CP art. 169, par. ún., II + CC art. 1.234)
-- [ ] Carro arrombado no estacionamento ("não nos responsabilizamos" — Súmula 130 STJ)
+- [x] EP 03 — Placa do estacionamento ("não nos responsabilizamos" — Súmula 130 STJ + CDC art. 51, I)
 - [ ] Preço da prateleira x caixa (Lei 10.962/2004: vale o menor. **Ressalva:** erro grosseiro não obriga a loja. Tema quente: Bitencourt fez 936 mil em 12 dias)
 - [ ] Comanda perdida / consumação mínima (CDC art. 39)
 - [ ] Cartão de crédito que ninguém pediu (Súmula 532 STJ)
@@ -81,3 +84,4 @@ Este é o manual vivo do canal. A cada vídeo publicado, preencha a tabela de re
 |---|---|---|---|
 | | EP 01 Pix errado | Formato que mais deu certo. Gancho com nome + valor; advogado com artigo; loop "vibrou de novo". | — |
 | | EP 02 Carteira | | |
+| | EP 03 Placa | | |
