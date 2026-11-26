@@ -5,6 +5,8 @@ import { SHOTS, TOTAL, shotAt, camAt, dofAt, LIGHTS, lightFor, actorsAt, worldAt
 import { SUBS } from './subs.js';
 
 const W = 1080, H = 1920;
+// platform-safe area (TikTok/Shorts UI): keep 150 px top, 350 px bottom, 150 px right clear
+export const SAFE = { x0: 40, x1: 930, y0: 150, y1: 1570, cx: 485, cy: 860, dx: 540 - 485, dy: 960 - 860 };
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H, false);
@@ -342,7 +344,7 @@ function drawScreen(st) {
     g.fillStyle = '#f3f5f7'; g.fillRect(0, 0, W, H); g.fillStyle = '#0f7a6b'; g.fillRect(0, 0, W, 520);
     g.fillStyle = '#fff'; g.font = '800 38px Inter'; g.fillText('Meu Banco', 40, 100); g.font = '600 32px Inter'; g.fillText('Olá, Ricardo', 40, 190);
     g.font = '600 30px Inter'; g.fillStyle = '#cdeee8'; g.fillText('Saldo disponível', 40, 300);
-    const k = st.hl || 0; g.fillStyle = k > 0 ? `rgb(255,${255 - 30 * k},${255 - 200 * k})` : '#fff'; g.font = '900 96px Inter'; g.fillText(st.amt || 'R$ 5.600,00', 34, 410);
+    const k = st.hl || 0; g.fillStyle = k > 0 ? `rgb(255,${255 - 30 * k},${255 - 200 * k})` : '#fff'; g.font = '900 82px Inter'; g.fillText(st.amt || 'R$ 5.600,00', 40, 405);
     g.fillStyle = '#1e1e26'; g.font = '800 34px Inter'; g.fillText('Últimas movimentações', 40, 610);
     [['10:12', 'Pix recebido'], ['08:12', 'Pix recebido']].forEach(([t, l], i) => { const y = 650 + i * 170; g.fillStyle = '#fff'; rr(g, 30, y, 540, 145, 26); g.fill(); g.fillStyle = '#18a36a'; g.beginPath(); g.arc(90, y + 72, 30, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '900 36px Inter'; g.textAlign = 'center'; g.fillText('↓', 90, y + 85); g.textAlign = 'left';
       g.fillStyle = '#1e1e26'; g.font = '700 32px Inter'; g.fillText(l, 140, y + 60); g.fillStyle = '#777'; g.font = '500 24px Inter'; g.fillText('Distribuidora São Jorge • ' + t, 140, y + 100); g.fillStyle = '#0f8a55'; g.font = '800 30px Inter'; g.textAlign = 'right'; g.fillText('+2.800,00', 560, y + 60); g.textAlign = 'left'; });
@@ -384,18 +386,18 @@ function overlay(f) {
     let s = still ? 1 : (k < 1 ? Math.max(0.05, 1.25 * M_back(k)) / 1.25 * 1.0 : 1);
     if (t.pulse && f >= t.pulse && f < t.pulse + 10) s *= 1 + 0.22 * Math.sin((f - t.pulse) / 10 * Math.PI);
     const wob = (t.wob ?? 1) * Math.sin((f + (t.ph ?? 0)) * 0.12) * 1.2;
-    og.save(); og.translate(t.x ?? 540, t.y); og.rotate(((t.rot ?? -3) + wob) * Math.PI / 180); og.scale(s, s);
+    og.save(); og.translate(t.x ?? SAFE.cx, t.y); og.rotate(((t.rot ?? -3) + wob) * Math.PI / 180); og.scale(s, s);
     if (t.box) { og.font = `900 ${t.size}px Inter`; const w = Math.max(...t.lines.map((l) => og.measureText(l).width)) + 70, h = t.lines.length * t.size * 1.12 + 40; og.fillStyle = t.box; og.strokeStyle = '#111'; og.lineWidth = 10; rr(og, -w / 2, -h / 2, w, h, 26); og.fill(); og.stroke(); }
     t.lines.forEach((l, i) => outlined(og, l, 0, (i - (t.lines.length - 1) / 2) * t.size * 1.12, { size: t.size, fill: t.fill || '#ffd23a', lw: t.lw || 20 }));
     og.restore();
   }
   const c = SUBS.find((c) => f >= c.a && f <= c.b);
   if (c) {
-    const size = 84; og.font = `900 ${size}px Inter`; const act = c.w.reduce((m, w, i) => f >= w[1] ? i : m, -1); const lines = []; let cur = [];
-    for (const w of c.w) { const t = [...cur, w].map((x) => x[0]).join(' '); if (og.measureText(t).width > 900 && cur.length) { lines.push(cur); cur = [w]; } else cur.push(w); }
+    const size = 78; og.font = `900 ${size}px Inter`; const act = c.w.reduce((m, w, i) => f >= w[1] ? i : m, -1); const lines = []; let cur = [];
+    for (const w of c.w) { const t = [...cur, w].map((x) => x[0]).join(' '); if (og.measureText(t).width > 780 && cur.length) { lines.push(cur); cur = [w]; } else cur.push(w); }
     lines.push(cur);
     const k = Math.min(1, (f - c.a) / 4), s = 0.86 + 0.14 * (1 - Math.pow(1 - k, 3)), y0 = 1100 - (lines.length - 1) * size * 0.56;
-    og.save(); og.translate(540, y0); og.scale(s, s);
+    og.save(); og.translate(SAFE.cx, y0); og.scale(s, s);
     lines.forEach((ln, li) => {
       const sp = og.measureText(' ').width, ws = ln.map((w) => og.measureText(w[0]).width), tot = ws.reduce((a, b) => a + b, 0) + sp * (ln.length - 1);
       let x = -tot / 2; ln.forEach((w, i) => { outlined(og, w[0], x, li * size * 1.12, { size, fill: c.w.indexOf(w) === act ? '#ffe14a' : '#ffffff', lw: 17, align: 'left' }); x += ws[i] + sp; });
@@ -438,7 +440,7 @@ window.renderFrame = (f) => {
   const S = shotAt(f), L = lightFor(S, f), C = camAt(f);
   applyLight(L, f);
   camera.position.set(...C.pos); camera.up.set(0, 1, 0); camera.lookAt(...C.look); camera.rotateZ(rx(C.roll || 0));
-  camera.fov = C.fov; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+  camera.fov = C.fov; camera.setViewOffset(W, H, SAFE.dx, SAFE.dy, W, H); camera.updateMatrixWorld(); // frame centre -> centre of the safe area
   const W_ = worldAt(f); worldState(W_, f);
   placeSun(L, new THREE.Vector3(...(C.shadowAt || C.look)));
   drawActors([...actorsAt(f, T), ...fxAt(f, T)], camera);
@@ -458,6 +460,7 @@ window.renderFrame = (f) => {
   dofU.focus.value = D.focus; dofU.cinf.value = D.cinf; dofU.near.value = D.near ?? 1;
   renderer.setRenderTarget(null); renderer.render(dofScene, fsCam);
   overlay(f);
+  if (location.hash === '#safe') { og.save(); og.fillStyle = 'rgba(255,0,0,.28)'; og.fillRect(0, 0, W, SAFE.y0); og.fillRect(0, SAFE.y1, W, H - SAFE.y1); og.fillRect(SAFE.x1, 0, W - SAFE.x1, H); og.restore(); }
   return true;
 };
 window.TOTAL = TOTAL;

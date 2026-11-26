@@ -39,52 +39,43 @@ const RIC = [0, 0, 0], TABLE = 0.79;
 const PH_TABLE = [-60.05, TABLE + 0.008, 0.0];
 const HAND = [0.04, 1.18, 0.16];          // where Ricardo holds the phone (card "phone" pose)
 const STU = [60, 0, 0], CEL = [120.2, 0, -0.45];
-const LOOPCAM = { pos: [-60.04, 1.33, 0.29], look: [-60.05, 0.79, 0.012], fov: 40 };
+const LOOPCAM = { pos: [-60.03, 1.33, 0.29], look: [-60.04, 0.79, 0.012], fov: 40 };
 
 // ---------- cameras ----------
+// Locked-off framings (hard cuts only, no dolly). Scenes without on-screen text/phone get a slow zoom of at most 5% (1.00 -> 1.05)
+// across the whole scene; scenes with text or a phone stay at 1.00. main.js shifts the frame centre into the platform-safe area.
 const CAMS = {
-  hook: { keys: [{ f: 0, ...LOOPCAM }, { f: 115, pos: [-60.045, 1.26, 0.26], look: [-60.05, 0.79, 0.015], fov: 39, roll: -2 }], creep: 0 },
-  work: { keys: [
+  hook: { zoom: false, cuts: [{ f: 0, ...LOOPCAM }] },
+  work: { zoom: false, cuts: [
     { f: 116, pos: [5.6, 3.7, 8.6], look: [-0.6, 1.0, -2.5], fov: 46 },
-    { f: 196, pos: [1.2, 1.65, 3.6], look: [0, 1.15, -0.3], fov: 40, ease: 'smooth' },
-    { f: 290, pos: [0.45, 1.55, 2.75], look: [0.05, 1.36, 0], fov: 38 },
-    { f: 385, pos: [0.25, 1.55, 2.45], look: [0.05, 1.38, 0], fov: 37 },
-    { f: 386, pos: [-1.6, 1.6, 3.2], look: [0, 1.15, -0.2], fov: 40 },
-    { f: 428, pos: [-1.3, 1.58, 3.0], look: [0, 1.17, -0.2], fov: 39 },
+    { f: 196, pos: [0.35, 1.62, 3.2], look: [0.05, 1.32, 0], fov: 40 },
+    { f: 386, pos: [-1.4, 1.62, 3.2], look: [0, 1.28, -0.2], fov: 40 },
   ] },
-  app: { keys: [
-    { f: 429, pos: [0.2, 1.5, 2.2], look: [0.05, 1.36, 0], fov: 38 },
-    { f: 584, pos: [0.12, 1.5, 1.9], look: [0.05, 1.37, 0], fov: 37 },
-    { f: 600, pos: [0.06, 1.24, 0.72], look: [0.04, 1.2, 0.16], fov: 36, ease: 'easeOut' },
-    { f: 664, pos: [0.06, 1.24, 0.66], look: [0.04, 1.2, 0.16], fov: 35, roll: 2 },
+  app: { zoom: false, cuts: [
+    { f: 429, pos: [0.15, 1.58, 2.5], look: [0.05, 1.36, 0], fov: 40 },
+    { f: 588, pos: [0.045, 1.16, 1.05], look: [0.04, 1.14, 0.16], fov: 38 },
   ] },
-  boleto: { keys: [{ f: 665, pos: [-60.46, 1.62, 0.32], look: [-60.48, 0.79, 0.1], fov: 40, roll: 4 }, { f: 723, pos: [-60.47, 1.52, 0.29], look: [-60.48, 0.79, 0.1], fov: 38, roll: 1 }] },
-  wait: { keys: [{ f: 724, pos: [-0.9, 1.55, 2.9], look: [0, 1.36, 0], fov: 40 }, { f: 846, pos: [0.9, 1.52, 2.65], look: [0, 1.37, 0], fov: 39 }] },
-  colega: { keys: [{ f: 847, pos: [-0.06, 1.55, 3.6], look: [-0.06, 1.32, 0], fov: 40 }, { f: 1023, pos: [-0.04, 1.55, 3.0], look: [-0.04, 1.36, 0], fov: 38 }] },
-  group: { keys: [
-    { f: 1024, pos: [0.07, 1.22, 0.62], look: [0.04, 1.18, 0.16], fov: 38 },
-    { f: 1100, pos: [0.06, 1.2, 0.58], look: [0.04, 1.175, 0.16], fov: 37 },
-    { f: 1130, pos: [0.05, 1.17, 0.56], look: [0.04, 1.155, 0.16], fov: 36, ease: 'easeOut' },
-    { f: 1207, pos: [0.05, 1.17, 0.53], look: [0.04, 1.155, 0.16], fov: 35, roll: -2 },
+  boleto: { zoom: false, cuts: [{ f: 665, pos: [-60.45, 1.62, 0.2], look: [-60.46, 0.79, 0.1], fov: 40 }] },
+  wait: { zoom: true, cuts: [{ f: 724, pos: [0, 1.6, 3.1], look: [0, 1.36, 0], fov: 40 }] },
+  colega: { zoom: true, cuts: [{ f: 847, pos: [0.0, 1.58, 3.7], look: [0.0, 1.33, 0], fov: 40 }] },
+  group: { zoom: false, cuts: [{ f: 1024, pos: [0.045, 1.16, 1.05], look: [0.04, 1.14, 0.16], fov: 38 }] },
+  gelou: { zoom: true, cuts: [{ f: 1208, pos: [0, 1.62, 2.4], look: [0, 1.46, 0], fov: 38 }] },
+  split: { zoom: false, cuts: [{ f: 1327, pos: [60, 1.4, 3.7], look: [60, 1.18, 0], fov: 40 }] },
+  celia: { zoom: true, cuts: [
+    { f: 1618, pos: [120.5, 1.68, 2.95], look: [119.98, 1.6, -0.9], fov: 40 },
+    { f: 1823, pos: [120.3, 1.56, 1.85], look: [120.25, 1.42, -0.45], fov: 38 },
   ] },
-  gelou: { keys: [{ f: 1208, pos: [0, 1.6, 2.4], look: [0, 1.48, 0], fov: 38 }, { f: 1326, pos: [0, 1.62, 1.75], look: [0, 1.53, 0], fov: 36, roll: -5 }] },
-  split: { keys: [{ f: 1327, pos: [60, 1.4, 3.5], look: [60, 1.22, 0], fov: 40 }, { f: 1617, pos: [60, 1.42, 3.1], look: [60, 1.25, 0], fov: 39 }] },
-  celia: { keys: [
-    { f: 1618, pos: [121.9, 1.7, 3.8], look: [120.3, 1.35, -1.0], fov: 42 },
-    { f: 1700, pos: [120.5, 1.5, 1.9], look: [120.2, 1.3, -0.45], fov: 38 },
-    { f: 1760, pos: [120.4, 1.52, 1.75], look: [120.15, 1.32, -0.45], fov: 38 },
-    { f: 1790, pos: [120.0, 1.75, 1.9], look: [119.6, 1.75, -1.6], fov: 40 },
-    { f: 1820, pos: [120.05, 1.72, 1.85], look: [119.65, 1.72, -1.6], fov: 39 },
-    { f: 1850, pos: [120.25, 1.58, 1.4], look: [120.2, 1.48, -0.45], fov: 36, roll: 3, ease: 'easeOut' },
-    { f: 1888, pos: [120.25, 1.58, 1.3], look: [120.2, 1.49, -0.45], fov: 35, roll: 5 },
-  ] },
-  loop: { keys: [{ f: 1889, pos: [-60.0, 1.48, 0.4], look: [-60.05, 0.79, 0.0], fov: 40, roll: 3 }, { f: 1954, ...LOOPCAM }], creep: 0 },
+  loop: { zoom: false, cuts: [{ f: 1889, ...LOOPCAM }] },
 };
-const KICKS = [{ f: 440, a: 0.03 }, { f: 520, a: 0.015 }, { f: 534, a: 0.015 }, { f: 547, a: 0.015 }, { f: 590, a: 0.025 }, { f: 690, a: 0.03 },
-  { f: 1115, a: 0.015 }, { f: 1221, a: 0.035 }, { f: 1856, a: 0.03 }];
+const KICKS = [{ f: 440, a: 0.02 }, { f: 590, a: 0.015 }, { f: 690, a: 0.02 }, { f: 1221, a: 0.025 }, { f: 1856, a: 0.02 }];
+export const ZOOM_MAX = 1.05;
 export const camAt = (f) => {
   const S = shotAt(f), C = CAMS[S.id];
-  const c = camFromKeys(C.keys, f, { creep: C.creep ?? 0.0012, kicks: KICKS });
+  const k = [...C.cuts].reverse().find((x) => f >= x.f) || C.cuts[0];
+  const z = C.zoom ? 1 + (ZOOM_MAX - 1) * clamp((f - S.a) / (S.b - S.a)) : 1;
+  const fov = 2 * Math.atan(Math.tan((k.fov * Math.PI / 180) / 2) / z) * 180 / Math.PI;
+  const c = { pos: [...k.pos], look: [...k.look], fov, roll: 0, zoom: z };
+  for (const kk of KICKS) { const d = f - kk.f; if (d >= 0 && d < 7) { const s = (d % 2 ? -1 : 1) * kk.a * (1 - d / 7); c.look = [c.look[0], c.look[1] + s * 3, c.look[2] + s * 2]; } }
   c.flash = f >= 386 && f < 392 ? (1 - (f - 386) / 6) * 0.9 : 0;
   if (S.id === 'hook' || S.id === 'loop' || S.id === 'boleto') c.shadowAt = [-60.1, TABLE, 0];
   else if (S.id === 'group' || S.id === 'app') c.shadowAt = [0, 1, 0];
@@ -100,13 +91,13 @@ export const dofAt = (f) => {
     case 'hook': case 'loop': return { focus: dist(C.pos, PH_TABLE), cinf: 8 };
     case 'boleto': return { focus: dist(C.pos, [-60.48, TABLE, 0.07]), cinf: 8 };
     case 'work': { const t = smooth(ramp(f, 150, 196)); return { focus: dist(C.pos, EYE(RIC)), cinf: lerp(0, 10, t) }; }
-    case 'app': { const t = smooth(ramp(f, 585, 600)); return { focus: lerp(dist(C.pos, EYE(RIC)), dist(C.pos, HAND), t), cinf: lerp(10, 12, t) }; }
+    case 'app': return f < 588 ? { focus: dist(C.pos, EYE(RIC)), cinf: 10 } : { focus: dist(C.pos, HAND), cinf: 12 };
     case 'wait': return { focus: dist(C.pos, EYE(RIC)), cinf: 10 };
     case 'colega': return { focus: dist(C.pos, [-0.3, 1.5, 0.05]), cinf: 9 };
     case 'group': return { focus: dist(C.pos, HAND), cinf: 13 };
     case 'gelou': return { focus: dist(C.pos, EYE(RIC)), cinf: 12 };
     case 'split': return { focus: dist(C.pos, EYE(STU)), cinf: 0 };
-    case 'celia': { const plaque = f >= 1772 && f < 1835; return { focus: plaque ? dist(C.pos, [119.3, 2.2, -2.88]) : dist(C.pos, EYE(CEL, 1.45)), cinf: 9 }; }
+    case 'celia': return { focus: dist(C.pos, EYE(CEL, 1.45)), cinf: f < 1823 ? 5 : 9 };
   }
   return { focus: 10, cinf: 0 };
 };
@@ -220,7 +211,7 @@ export const fxAt = (f, T) => {
   if (S.id === 'app' && f >= 438 && f < 470) { const k = pop(f, 438, 6); out.push(FX('ex' + k, mark('!', '#ffd23a'), [-0.42, 1.95, 0.05], 0.32 * Math.max(0.05, k), { roll: -0.2 })); }
   if (S.id === 'wait') {
     if (f >= 742 && f < 800) { const k = pop(f, 742, 6); out.push(FX('q1' + k, mark('?', '#ffffff'), [-0.5, 1.7, 0.05], 0.24 * Math.max(0.05, k), { roll: 0.2 })); }
-    if (f >= 770 && f < 805) { const k = pop(f, 770, 6); out.push(FX('q2' + k, mark('?', '#ffffff'), [0.5, 1.76, 0.05], 0.2 * Math.max(0.05, k), { roll: -0.2 })); }
+    if (f >= 770 && f < 805) { const k = pop(f, 770, 6); out.push(FX('q2' + k, mark('?', '#ffffff'), [0.2, 1.98, 0.05], 0.2 * Math.max(0.05, k), { roll: -0.2 })); }
   }
   if (S.id === 'colega' && f < 1007) { const t = q((f * 0.04) % 1, 2); out.push(FX('sq' + t, squig(t), [0.02, 1.4, 0.3], 0.16)); }
   if (S.id === 'celia' && f >= 1856) for (let i = 0; i < 5; i++) { // papers slip out of her hands and flutter down
@@ -234,11 +225,11 @@ export const fxAt = (f, T) => {
 
 // ---------- on-screen titles (2D overlay) ----------
 export const TEXTS = [
-  { a: 0, b: 115, lines: ['CAIU 2 VEZES?!'], y: 300, size: 120, ph: 0 },
-  { a: 1889, b: 1953, lines: ['CAIU 2 VEZES?!'], y: 300, size: 120, ph: -1954, still: true },
-  { a: 588, b: 664, lines: ['R$ 5.600', 'NA CONTA'], y: 330, size: 124, fill: '#9cff7a' },
-  { a: 1113, b: 1207, lines: ['"HOUVE UM ERRO', 'NO PAGAMENTO"'], y: 330, size: 92, fill: '#ffffff', box: '#d9443a', rot: -2 },
-  { a: 1382, b: 1617, lines: ['DEVOLVE 🤝'], x: 275, y: 400, size: 72, fill: '#ffffff', box: '#1f8f46', rot: -4, pulse: 1433 },
-  { a: 1386, b: 1617, lines: ['FICA 💰'], x: 805, y: 400, size: 72, fill: '#ffffff', box: '#b8322c', rot: 4, pulse: 1471 },
-  { a: 1499, b: 1617, lines: ['SEGUE E SE INSCREVE'], y: 240, size: 78, fill: '#ffffff', box: '#241726', rot: -2 },
+  { a: 0, b: 115, lines: ['CAIU 2 VEZES?!'], y: 270, size: 100, ph: 0 },
+  { a: 1889, b: 1953, lines: ['CAIU 2 VEZES?!'], y: 270, size: 100, ph: -1954, still: true },
+  { a: 588, b: 664, lines: ['R$ 5.600', 'NA CONTA'], y: 300, size: 100, fill: '#9cff7a' },
+  { a: 1113, b: 1207, lines: ['"HOUVE UM ERRO', 'NO PAGAMENTO"'], y: 300, size: 74, fill: '#ffffff', box: '#d9443a', rot: -2 },
+  { a: 1382, b: 1617, lines: ['DEVOLVE 🤝'], x: 250, y: 400, size: 62, fill: '#ffffff', box: '#1f8f46', rot: -4, pulse: 1433 },
+  { a: 1386, b: 1617, lines: ['FICA 💰'], x: 730, y: 400, size: 62, fill: '#ffffff', box: '#b8322c', rot: 4, pulse: 1471 },
+  { a: 1499, b: 1617, lines: ['SEGUE E SE INSCREVE'], y: 255, size: 60, fill: '#ffffff', box: '#241726', rot: -2 },
 ];
