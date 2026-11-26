@@ -1,0 +1,395 @@
+{
+ "duration": 78.602438,
+ "frames30": 2358,
+ "source": "whisper",
+ "segments": [
+  [
+   0.0,
+   1.20281
+  ],
+  [
+   1.71456,
+   5.37388
+  ],
+  [
+   5.94372,
+   10.1561
+  ],
+  [
+   10.6394,
+   11.3308
+  ],
+  [
+   11.8479,
+   12.6842
+  ],
+  [
+   13.1368,
+   14.1411
+  ],
+  [
+   14.6183,
+   16.1302
+  ],
+  [
+   16.368,
+   17.2969
+  ],
+  [
+   17.7867,
+   18.3765
+  ],
+  [
+   18.7958,
+   20.2868
+  ],
+  [
+   20.7029,
+   22.4791
+  ],
+  [
+   22.6337,
+   23.3379
+  ],
+  [
+   23.7513,
+   24.7401
+  ],
+  [
+   25.1392,
+   26.4619
+  ],
+  [
+   26.7023,
+   27.6373
+  ],
+  [
+   28.0796,
+   29.8911
+  ],
+  [
+   30.2611,
+   31.4588
+  ],
+  [
+   31.8497,
+   34.3342
+  ],
+  [
+   34.6662,
+   37.2161
+  ],
+  [
+   37.6854,
+   39.2141
+  ],
+  [
+   39.6307,
+   40.2638
+  ],
+  [
+   40.4674,
+   42.0553
+  ],
+  [
+   42.4642,
+   43.4459
+  ],
+  [
+   43.7073,
+   44.3179
+  ],
+  [
+   44.6263,
+   47.1286
+  ],
+  [
+   47.5851,
+   48.4984
+  ],
+  [
+   48.9247,
+   51.0212
+  ],
+  [
+   51.4625,
+   52.6308
+  ],
+  [
+   52.7618,
+   53.4321
+  ],
+  [
+   53.6893,
+   54.9786
+  ],
+  [
+   55.1196,
+   55.451
+  ],
+  [
+   55.9036,
+   57.5307
+  ],
+  [
+   57.8198,
+   60.3502
+  ],
+  [
+   60.6908,
+   62.9134
+  ],
+  [
+   63.1738,
+   64.1779
+  ],
+  [
+   64.3217,
+   65.1785
+  ],
+  [
+   65.6251,
+   66.1142
+  ],
+  [
+   66.2661,
+   67.0273
+  ],
+  [
+   67.3221,
+   69.4145
+  ],
+  [
+   69.8231,
+   70.4069
+  ],
+  [
+   70.8635,
+   73.5772
+  ],
+  [
+   73.9063,
+   75.8991
+  ],
+  [
+   76.3185,
+   76.9982
+  ],
+  [
+   77.1513,
+   78.3946
+  ]
+ ],
+ "phrases": [
+  {
+   "text": "Um n\u00famero trocado.",
+   "s": 0.0,
+   "e": 1.08
+  },
+  {
+   "text": "E mil e duzentos reais do aluguel foram parar na conta de um estranho.",
+   "s": 1.58,
+   "e": 5.38
+  },
+  {
+   "text": "Juliana olhou o comprovante e leu um nome que nunca tinha visto na vida.",
+   "s": 5.86,
+   "e": 10.04
+  },
+  {
+   "text": "Marcos.",
+   "s": 10.6,
+   "e": 11.14
+  },
+  {
+   "text": "O telefone tocou.",
+   "s": 11.8,
+   "e": 12.66
+  },
+  {
+   "text": "Era o dono da casa.",
+   "s": 13.12,
+   "e": 14.0
+  },
+  {
+   "text": "J\u00e1 mandei,",
+   "s": 14.58,
+   "e": 15.26
+  },
+  {
+   "text": "seu Jorge.",
+   "s": 15.38,
+   "e": 15.86
+  },
+  {
+   "text": "J\u00e1,",
+   "s": 16.38,
+   "e": 16.58
+  },
+  {
+   "text": "j\u00e1 cai.",
+   "s": 16.64,
+   "e": 17.12
+  },
+  {
+   "text": "Mentira.",
+   "s": 17.76,
+   "e": 18.3
+  },
+  {
+   "text": "O dinheiro estava com o Marcos.",
+   "s": 18.8,
+   "e": 20.16
+  },
+  {
+   "text": "Ela abriu o aplicativo e apertou Contestar.",
+   "s": 20.66,
+   "e": 23.14
+  },
+  {
+   "text": "E o banco respondeu.",
+   "s": 23.66,
+   "e": 24.7
+  },
+  {
+   "text": "Esse bot\u00e3o \u00e9 pra golpe.",
+   "s": 24.7,
+   "e": 26.34
+  },
+  {
+   "text": "Erro seu,",
+   "s": 26.68,
+   "e": 27.24
+  },
+  {
+   "text": "n\u00e3o.",
+   "s": 27.38,
+   "e": 27.52
+  },
+  {
+   "text": "Juliana ligou chorando pro banco.",
+   "s": 28.04,
+   "e": 29.84
+  },
+  {
+   "text": "A atendente foi direta.",
+   "s": 30.22,
+   "e": 31.42
+  },
+  {
+   "text": "A gente avisa o banco dele e pede a devolu\u00e7\u00e3o.",
+   "s": 31.84,
+   "e": 34.24
+  },
+  {
+   "text": "Mas anota esse protocolo e guarda o comprovante.",
+   "s": 34.6,
+   "e": 37.14
+  },
+  {
+   "text": "Dois dias sem resposta.",
+   "s": 37.7,
+   "e": 39.0
+  },
+  {
+   "text": "No terceiro,",
+   "s": 39.58,
+   "e": 40.26
+  },
+  {
+   "text": "chegou uma mensagem do Marcos.",
+   "s": 40.44,
+   "e": 41.96
+  },
+  {
+   "text": "Recebi seu dinheiro.",
+   "s": 42.44,
+   "e": 43.28
+  },
+  {
+   "text": "Devolvo.",
+   "s": 43.78,
+   "e": 44.28
+  },
+  {
+   "text": "Se voc\u00ea me mandar duzentos reais pelo inc\u00f4modo.",
+   "s": 44.64,
+   "e": 47.14
+  },
+  {
+   "text": "Juliana travou.",
+   "s": 47.48,
+   "e": 48.46
+  },
+  {
+   "text": "Pagar pra receber o que j\u00e1 era dela?",
+   "s": 48.86,
+   "e": 50.88
+  },
+  {
+   "text": "Foi a\u00ed que a vizinha,",
+   "s": 50.88,
+   "e": 52.58
+  },
+  {
+   "text": "a advogada,",
+   "s": 52.72,
+   "e": 53.36
+  },
+  {
+   "text": "falou uma frase que mudou tudo.",
+   "s": 53.68,
+   "e": 55.34
+  },
+  {
+   "text": "Ele n\u00e3o precisa de nada disso.",
+   "s": 55.82,
+   "e": 57.42
+  },
+  {
+   "text": "Tem um bot\u00e3o Devolver no pr\u00f3prio PIX.",
+   "s": 57.76,
+   "e": 60.22
+  },
+  {
+   "text": "E quem fica com dinheiro recebido por engano pode responder at\u00e9 criminalmente.",
+   "s": 60.66,
+   "e": 65.12
+  },
+  {
+   "text": "E voc\u00ea,",
+   "s": 65.56,
+   "e": 66.0
+  },
+  {
+   "text": "no lugar dela?",
+   "s": 66.28,
+   "e": 66.92
+  },
+  {
+   "text": "Pagava os duzentos ou batia o p\u00e9?",
+   "s": 67.34,
+   "e": 69.34
+  },
+  {
+   "text": "Comenta a\u00ed.",
+   "s": 69.78,
+   "e": 70.4
+  },
+  {
+   "text": "O que o Marcos fez depois eu conto na parte dois.",
+   "s": 70.84,
+   "e": 73.36
+  },
+  {
+   "text": "Segue o perfil e se inscreve no canal.",
+   "s": 73.84,
+   "e": 75.82
+  },
+  {
+   "text": "E pensar que tudo come\u00e7ou com...",
+   "s": 76.28,
+   "e": 78.46
+  }
+ ]
+}
