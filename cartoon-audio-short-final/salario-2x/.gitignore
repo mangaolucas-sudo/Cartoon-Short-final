@@ -1,0 +1,6 @@
+frames/
+stills/*/
+node_modules
+web/lib/
+*.wav
+work/voice16.wav

@@ -1,0 +1,8 @@
+<!doctype html><html><body style="margin:0;background:#ddd"><canvas id="c" width="3000" height="1000"></canvas>
+<script type="module">
+import * as T from './toon.js';
+const g=document.getElementById('c').getContext('2d');
+const L=[['ricardo',{expr:'neutral',L:'box',R:'box',prop:'box'}],['ricardo',{expr:'shock',R:'phone',prop:'phone'}],['ricardo',{expr:'suspicious',look:-0.8}],['ricardo',{expr:'shock',pale:0.6,sweat:0.3}],['colega',{expr:'whisper',R:'mouth',facing:1,look:0.5}],['celia',{expr:'worried',L:'hold',R:'hold',prop:'papers'}],['extraA',{expr:'neutral'}],['extraB',{expr:'grin'}]];
+L.forEach(([k,o],i)=>{g.save();g.translate(i*370,0);T.romanFront(new T.Pen(g),k,{seed:3,...o});g.restore();});
+window.done=1;
+</script></body></html>
