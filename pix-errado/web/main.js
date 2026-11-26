@@ -371,7 +371,7 @@ window.renderFrame = (f) => {
   applyLight(L, f); worldState(worldAt(f), f);
   outG.setTransform(1, 0, 0, 1, 0, 0); outG.clearRect(0, 0, W, H);
   viewsAt(f).forEach((V, vi) => renderView(f, V, S, L, vi));
-  drawOverlay(outG, overlayAt(f), f);
+  if (location.hash !== '#clean') drawOverlay(outG, overlayAt(f), f);
   return true;
 };
 window.TOTAL = TOTAL;
