@@ -1,181 +1,150 @@
-"""Synthesized music bed + SFX for the soldier short, mixed under voice.mp3."""
-import numpy as np, subprocess, wave
+"""Synthesized music bed + SFX stems for "O Bento resolve #1 – Pix errado". Writes music.wav and sfx.wav (mono, 48 kHz).
+Levels are NOT set here: mix.py locks music to 50 % of the voice (gated RMS) and SFX to <= 50 %."""
+import numpy as np, wave
 
 SR = 48000
-DUR = 592 / 30
-N = int(DUR * SR)
-rng = np.random.default_rng(7)
-t_all = np.arange(N) / SR
+TOTAL = 2358
+DUR = TOTAL / 30
+N = int(round(DUR * SR))
+rng = np.random.default_rng(11)
+F = lambda f: f / 30
 
-def load_voice():
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", "voice.mp3", "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True).stdout
-    v = np.frombuffer(raw, np.float32).copy()
-    out = np.zeros(N, np.float32); out[:min(N, len(v))] = v[:N]; return out
+def write(name, x):
+    pcm = (np.clip(x, -1, 1) * 32767).astype(np.int16)
+    with wave.open(name, "wb") as w: w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
 
-def env(n, a=0.005, r=0.2, sus=None):
-    t = np.arange(n) / SR
-    e = np.minimum(1, t / max(a, 1e-4)) * np.exp(-t / r)
-    return e
-
-def lp(x, k):  # one-pole low-pass, k in (0,1)
-    y = np.empty_like(x); acc = 0.0
-    for i in range(len(x)): acc += k * (x[i] - acc); y[i] = acc
-    return y
-
-def lp_fast(x, cutoff):
-    # FFT brick-ish low-pass (fast, fine for beds)
-    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR)
-    X *= 1 / (1 + (f / cutoff) ** 4); return np.fft.irfft(X, len(x)).astype(np.float32)
-
-def hp_fast(x, cutoff):
-    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR)
-    X *= 1 - 1 / (1 + (f / cutoff) ** 4); return np.fft.irfft(X, len(x)).astype(np.float32)
-
+def env(n, a=0.005, r=0.2):
+    t = np.arange(n) / SR; return np.minimum(1, t / max(a, 1e-4)) * np.exp(-t / r)
+def lp(x, c):
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR); X *= 1 / (1 + (f / c) ** 4); return np.fft.irfft(X, len(x)).astype(np.float32)
+def hp(x, c):
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR); X *= 1 - 1 / (1 + (f / c) ** 4); return np.fft.irfft(X, len(x)).astype(np.float32)
 def place(buf, sig, t0, gain=1.0):
     i = int(t0 * SR); j = min(N, i + len(sig))
+    if i < 0: sig = sig[-i:]; j = min(N, len(sig)); i = 0
     if i < N and j > i: buf[i:j] += sig[: j - i] * gain
-
+def noise(d): return rng.standard_normal(int(d * SR)).astype(np.float32)
 midi = lambda m: 440 * 2 ** ((m - 69) / 12)
 
-# ---------------- music ----------------
+# ---------------- music: light, curious pizzicato bed (minor -> brighter after the reveal) ----------------
 music = np.zeros(N, np.float32)
-BPM = 104; beat = 60 / BPM
-prog = [(57, [57, 60, 64]), (53, [53, 57, 60]), (55, [55, 59, 62]), (52, [52, 56, 59])]  # Am F G E
-def pluck(f, dur=0.35, bright=0.5):
+BPM = 112; beat = 60 / BPM
+def pluck(f, dur=0.3, bright=0.5):
     n = int(dur * SR); t = np.arange(n) / SR
     s = sum((bright ** k) * np.sin(2 * np.pi * f * (k + 1) * t) / (k + 1) for k in range(6))
-    return (s * env(n, 0.003, dur * 0.35)).astype(np.float32)
-def brass(fs, dur):
+    return (s * env(n, 0.002, dur * 0.3)).astype(np.float32)
+def pad(fs, dur):
     n = int(dur * SR); t = np.arange(n) / SR; s = np.zeros(n)
-    for f in fs:
-        ph = 2 * np.pi * f * t + 0.003 * np.sin(2 * np.pi * 5 * t)
-        s += sum(np.sin((k + 1) * ph) / (k + 1) ** 1.3 for k in range(8))
-    a = np.minimum(1, t / 0.08) * np.minimum(1, (dur - t) / 0.15).clip(0)
-    return lp_fast((s * a).astype(np.float32), 1800) / len(fs)
-def drum(kind):
-    if kind == "kick":
-        n = int(0.35 * SR); t = np.arange(n) / SR; f = 50 + 90 * np.exp(-t * 30)
-        return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 9)).astype(np.float32)
-    n = int(0.18 * SR); t = np.arange(n) / SR
-    s = rng.standard_normal(n) * np.exp(-t * 28) * 0.6 + np.sin(2 * np.pi * 190 * t) * np.exp(-t * 20) * 0.5
-    return hp_fast(s.astype(np.float32), 300)
+    for f in fs: s += np.sin(2 * np.pi * f * t + 0.002 * np.sin(2 * np.pi * 4.5 * t)) + 0.3 * np.sin(4 * np.pi * f * t)
+    a = np.minimum(1, t / 0.25) * np.minimum(1, (dur - t) / 0.3).clip(0)
+    return lp((s * a).astype(np.float32), 1400) / len(fs)
+def kick():
+    n = int(0.3 * SR); t = np.arange(n) / SR; f = 50 + 80 * np.exp(-t * 30)
+    return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 10)).astype(np.float32)
+def shaker():
+    n = int(0.08 * SR); t = np.arange(n) / SR; return hp(rng.standard_normal(n).astype(np.float32) * np.exp(-t * 60), 4000)
 
-MUSIC_END = 14.15  # music stops on "The bridge is not safe"
-bar = 0; tt = 0.0
-while tt < MUSIC_END:
-    root, ch = prog[bar % 4]
-    place(music, brass([midi(m) for m in ch], beat * 4 * 0.98), tt, 0.10)
-    for b in range(4):
-        tb = tt + b * beat
-        if tb >= MUSIC_END: break
-        place(music, drum("kick" if b % 2 == 0 else "snare"), tb, 0.55 if b % 2 == 0 else 0.32)
-        place(music, pluck(midi(root - 12), 0.4, 0.4), tb, 0.35)
-        place(music, pluck(midi(ch[(b + bar) % 3] + 12), 0.22, 0.6), tb + beat / 2, 0.13)
-    if bar % 2 == 1:  # little fanfare figure
-        for k, m in enumerate([ch[0] + 12, ch[1] + 12, ch[2] + 12]):
-            place(music, brass([midi(m)], beat * 0.45), tt + 2 * beat + k * beat * 0.5, 0.07)
-    bar += 1; tt += beat * 4
-# fade the bed at the stop
-i0 = int((MUSIC_END - 0.08) * SR); music[i0:] *= np.linspace(1, 0, N - i0) ** 8
-# tension drone from the sting to the end
-dn = int((DUR - MUSIC_END) * SR); td = np.arange(dn) / SR
-drone = (np.sin(2 * np.pi * 55 * td) + 0.5 * np.sin(2 * np.pi * 82.4 * td) + 0.3 * np.sin(2 * np.pi * 110.3 * td)) * np.minimum(1, td / 1.2)
-drone = lp_fast(drone.astype(np.float32), 600)
-place(music, drone, MUSIC_END, 0.09)
+MINOR = [(57, [57, 60, 64]), (53, [53, 57, 60]), (50, [50, 53, 57]), (52, [52, 56, 59])]   # Am F Dm E
+MAJOR = [(60, [60, 64, 67]), (57, [57, 60, 64]), (53, [53, 57, 60]), (55, [55, 59, 62])]   # C Am F G
+def section(t0, t1, prog, drums=True):
+    bar = 0; tt = t0
+    while tt < t1:
+        root, ch = prog[bar % 4]
+        place(music, pad([midi(m) for m in ch], min(beat * 4, t1 - tt)), tt, 0.08)
+        for b in range(8):
+            tb = tt + b * beat / 2
+            if tb >= t1: break
+            m = ch[(b * 2 + bar) % 3] + (12 if b % 2 else 0)
+            place(music, pluck(midi(m + 12), 0.22, 0.55), tb, 0.12 if b % 2 else 0.16)
+            if drums and b % 4 == 0: place(music, kick(), tb, 0.35)
+            if drums: place(music, shaker(), tb + beat / 4, 0.05)
+        place(music, pluck(midi(root - 12), 0.5, 0.35), tt, 0.3); place(music, pluck(midi(root - 12), 0.4, 0.35), tt + 2 * beat, 0.22)
+        bar += 1; tt += beat * 4
+def fade(t0, t1, up=False):
+    i0, i1 = int(t0 * SR), int(t1 * SR); r = np.linspace(0, 1, i1 - i0) if up else np.linspace(1, 0, i1 - i0)
+    music[i0:i1] *= r ** 2
+
+SILENCE_A, SILENCE_B = F(1421), F(1524)   # short silence in scene 6
+section(0, SILENCE_A + 0.3, MINOR)
+fade(SILENCE_A - 0.25, SILENCE_A + 0.05); music[int((SILENCE_A + 0.05) * SR):int(SILENCE_B * SR)] = 0
+tmp = music.copy(); music[:] = 0
+section(SILENCE_B, DUR + 1, MAJOR)
+i = int(SILENCE_B * SR); tmp[i:] = 0; music += tmp
+fade(SILENCE_B, SILENCE_B + 0.6, up=True)
 
 # ---------------- sfx ----------------
 sfx = np.zeros(N, np.float32)
-def noise(d): return rng.standard_normal(int(d * SR)).astype(np.float32)
-def thunk(f0=90, d=0.3):
+def tap():
+    d = 0.06; n = int(d * SR); t = np.arange(n) / SR
+    return (hp(noise(d), 1800) * np.exp(-t * 90) * 0.8 + np.sin(2 * np.pi * 1400 * t) * np.exp(-t * 120) * 0.4).astype(np.float32)
+def plim():
+    out = np.zeros(int(0.9 * SR), np.float32)
+    for k, (f, t0) in enumerate([(1568, 0), (2093, 0.09)]):
+        n = int(0.8 * SR); t = np.arange(n) / SR
+        s = (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t)) * env(n, 0.003, 0.22)
+        i = int(t0 * SR); out[i:i + n] += s[: len(out) - i].astype(np.float32) * 0.6
+    return out
+def ring(d):
     n = int(d * SR); t = np.arange(n) / SR
-    return (np.sin(2 * np.pi * f0 * t * (1 + 0.6 * np.exp(-t * 40))) * np.exp(-t * 14) + lp_fast(noise(d), 1200) * np.exp(-t * 30) * 0.5).astype(np.float32)
-def rumble(d):
-    n = int(d * SR); t = np.arange(n) / SR
-    s = lp_fast(noise(d), 160) * 3 * np.minimum(1, t / 0.15) * np.exp(-t / (d * 0.45))
-    return s.astype(np.float32)
-def crash(d=1.2):
-    n = int(d * SR); t = np.arange(n) / SR; s = np.zeros(n, np.float32)
-    for k in range(14):
-        tk = rng.uniform(0, d * 0.6); i = int(tk * SR); g = thunk(rng.uniform(60, 160), 0.35) * rng.uniform(0.3, 0.9)
-        s[i:i + len(g)] += g[: n - i]
-    s += lp_fast(noise(d), 2500) * np.exp(-t * 3) * 0.25
-    return s
-def cuckoo():
+    tone = (np.sin(2 * np.pi * 1320 * t) + np.sin(2 * np.pi * 1660 * t)) * 0.5 * (np.sin(2 * np.pi * 20 * t) > 0)
+    gate = ((t % 1.6) < 0.4) | (((t % 1.6) > 0.55) & ((t % 1.6) < 0.95))   # "trrim trrim"
+    return lp((tone * gate).astype(np.float32), 5000) * 0.6
+def error():
     out = []
-    for f, d in [(740, 0.16), (587, 0.24)]:
-        n = int(d * SR); t = np.arange(n) / SR
-        out.append(np.sin(2 * np.pi * f * t) * np.minimum(1, t / 0.01) * np.exp(-t * 6)); out.append(np.zeros(int(0.06 * SR)))
-    return np.concatenate(out).astype(np.float32)
-def scrape(d=0.8):
+    for f in (330, 262):
+        n = int(0.18 * SR); t = np.arange(n) / SR
+        s = np.sign(np.sin(2 * np.pi * f * t)) * 0.4 * np.minimum(1, (0.18 - t) / 0.02); out.append(lp(s.astype(np.float32), 2500)); out.append(np.zeros(int(0.04 * SR), np.float32))
+    return np.concatenate(out)
+def tick(hi=True):
+    d = 0.05; n = int(d * SR); t = np.arange(n) / SR
+    return (hp(noise(d), 2500 if hi else 1500) * np.exp(-t * 140) + np.sin(2 * np.pi * (2600 if hi else 1900) * t) * np.exp(-t * 160) * 0.5).astype(np.float32)
+def whoosh(d=0.35):
     n = int(d * SR); t = np.arange(n) / SR
-    s = noise(d) * (0.5 + 0.5 * np.sin(2 * np.pi * 13 * t)) * np.sin(np.pi * t / d)
-    s = hp_fast(lp_fast(s, 5000), 1500)
-    ring = np.sin(2 * np.pi * 1870 * t) * np.exp(-t * 3) * 0.2
-    return (s * 0.6 + ring).astype(np.float32)
-def ting():
-    n = int(1.2 * SR); t = np.arange(n) / SR
-    return (sum(np.sin(2 * np.pi * f * t) * np.exp(-t * k) for f, k in [(2093, 4), (3136, 6), (4186, 8)]) * 0.3).astype(np.float32)
-def sting():
-    n = int(2.0 * SR); t = np.arange(n) / SR
-    low = np.sin(2 * np.pi * 41 * t) * np.exp(-t * 1.5) * 1.2
-    hit = lp_fast(noise(2.0), 900) * np.exp(-t * 6) * 0.8
-    stab = brass([midi(45), midi(48), midi(51)], 1.4); s = low + hit; s[: len(stab)] += stab * 2.2 * np.exp(-np.arange(len(stab)) / SR * 2)
-    return s.astype(np.float32)
-def creak(d=0.6, f0=140):
-    n = int(d * SR); t = np.arange(n) / SR
-    rate = f0 * (1 + 0.35 * np.sin(2 * np.pi * 1.3 * t / d))
-    ph = np.cumsum(rate) / SR; pulses = (np.mod(ph, 1) < 0.08).astype(np.float32)
-    s = lp_fast(pulses * (0.6 + 0.4 * rng.random(n).astype(np.float32)), 2200) * np.sin(np.pi * t / d)
-    return hp_fast(s, 200) * 2.5
-def snap():
-    d = 0.5; n = int(d * SR); t = np.arange(n) / SR
-    return (hp_fast(noise(d), 800) * np.exp(-t * 18) * 1.4 + np.pad(thunk(120, 0.4), (0, n - int(0.4 * SR))) * 0.6).astype(np.float32)
-def splash(d=1.0):
-    n = int(d * SR); t = np.arange(n) / SR
-    s = lp_fast(noise(d), 4000) * (np.exp(-t * 4) * np.minimum(1, t / 0.01)) + lp_fast(noise(d), 400) * np.exp(-t * 7) * 1.5
-    return s.astype(np.float32)
-def whoosh(d=0.5):
-    n = int(d * SR); t = np.arange(n) / SR
-    return (lp_fast(noise(d), 1500) * np.sin(np.pi * t / d) ** 2 * 0.6).astype(np.float32)
-def snore(d=1.1):
-    n = int(d * SR); t = np.arange(n) / SR
-    buzz = (np.mod(np.cumsum(60 + 25 * np.sin(np.pi * t / d)) / SR, 1) < 0.3).astype(np.float32)
-    return (lp_fast(buzz * 0.5 + noise(d) * 0.15, 700) * np.sin(np.pi * t / d) ** 2).astype(np.float32)
-def leaves(d):
-    n = int(d * SR); t = np.arange(n) / SR
-    return (hp_fast(lp_fast(noise(d), 6000), 2500) * (0.3 + 0.3 * np.sin(2 * np.pi * 0.7 * t) ** 2) * np.minimum(1, t / 0.4) * np.minimum(1, (d - t) / 0.4)).astype(np.float32)
-def water(d):
-    n = int(d * SR); t = np.arange(n) / SR
-    return (lp_fast(noise(d), 900) * 0.5 + hp_fast(lp_fast(noise(d), 3000), 1200) * 0.15 * (0.6 + 0.4 * np.sin(2 * np.pi * 0.4 * t))).astype(np.float32)
+    return (lp(noise(d), 2200) * np.sin(np.pi * t / d) ** 2 * 0.5).astype(np.float32)
+def notif():
+    out = np.zeros(int(0.7 * SR), np.float32)
+    for f, t0 in [(1047, 0), (1319, 0.1), (1568, 0.2)]:
+        n = int(0.45 * SR); t = np.arange(n) / SR; s = np.sin(2 * np.pi * f * t) * env(n, 0.003, 0.12)
+        i = int(t0 * SR); out[i:i + n] += s.astype(np.float32) * 0.5
+    return out
+def impact():
+    d = 1.6; n = int(d * SR); t = np.arange(n) / SR
+    low = np.sin(2 * np.pi * (38 + 30 * np.exp(-t * 8)) * t) * np.exp(-t * 2.2)
+    hit = lp(noise(d), 700) * np.exp(-t * 7) * 0.7
+    return (low + hit).astype(np.float32)
+def ding():
+    n = int(1.4 * SR); t = np.arange(n) / SR
+    return (sum(np.sin(2 * np.pi * f * t) * np.exp(-t * k) for f, k in [(1760, 3), (2637, 4.5), (3520, 6)]) * 0.3).astype(np.float32)
+def pop():
+    d = 0.12; n = int(d * SR); t = np.arange(n) / SR; f = 900 * np.exp(-t * 18) + 250
+    return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 30)).astype(np.float32)
+def stomp():
+    d = 0.35; n = int(d * SR); t = np.arange(n) / SR
+    return (np.sin(2 * np.pi * 70 * t * (1 + 0.5 * np.exp(-t * 40))) * np.exp(-t * 14) + lp(noise(d), 900) * np.exp(-t * 30) * 0.5).astype(np.float32)
 
-F = lambda f: f / 30
-place(sfx, whoosh(0.6), F(18), 0.5)            # hook camera pull-back
-place(sfx, leaves(2.2), F(62), 0.35)           # the years blow past
-place(sfx, thunk(85, 0.35), F(120), 1.0)       # spear stamp on "post"
-place(sfx, rumble(2.2), F(176), 0.9)           # empire collapses
-place(sfx, crash(1.4), F(186), 0.7)
-place(sfx, whoosh(0.5), F(196), 0.35)          # rack to the soldier
-place(sfx, cuckoo(), F(255), 0.35)             # "crazy"
-place(sfx, whoosh(0.4), F(276), 0.6)           # time jump flash
-for k in range(2): place(sfx, snore(1.15), F(286) + k * 1.45, 0.45)
-place(sfx, scrape(0.9), F(316), 0.6)           # helmet lifted
-place(sfx, ting(), F(392), 0.55)               # the carving glints
-place(sfx, sting(), 14.18, 0.85)               # "The bridge is not safe."
-place(sfx, creak(0.55, 120), F(464), 0.9); place(sfx, creak(0.5, 160), F(473), 0.7)
-place(sfx, whoosh(0.7), F(484), 0.5)           # crane under the deck
-place(sfx, water(DUR - F(484)), F(484), 0.35)
-place(sfx, creak(0.8, 90), F(536), 1.0)
-place(sfx, snap(), F(548), 0.9)                # brace breaks on "rotting"
-place(sfx, splash(1.0), F(580), 0.9)
+# scene 1: key tap on the wrong digit (frame 0) + Pix "plim" when it is sent
+place(sfx, tap(), F(0), 0.8)
+place(sfx, tap(), F(96), 0.6)
+place(sfx, plim(), F(104), 0.8)
+# scene 2: phone ringing while "Seu Jorge" calls
+place(sfx, ring(F(428) - F(352)), F(352), 0.55)
+# scene 3: tap on Contestar, error buzz with the red warning
+place(sfx, tap(), F(670), 0.7)
+place(sfx, error(), F(721), 0.65)
+# scene 5: clock tick-tock while the days pass, page flips, then notification + dramatic hit
+for k, f in enumerate(range(1127, 1209, 6)): place(sfx, tick(k % 2 == 0), F(f), 0.55)
+place(sfx, whoosh(0.3), F(1150), 0.4); place(sfx, whoosh(0.3), F(1182), 0.4)
+place(sfx, notif(), F(1213), 0.75)
+place(sfx, impact(), F(1216), 0.9)
+# scene 6: short silence (music cut in the bed, no sfx)
+# scene 7: reveal "ding" on "Devolver"
+place(sfx, ding(), F(1753), 0.7)
+# scene 8: a "pop" for each option + a soft stomp
+place(sfx, pop(), F(2020), 0.8); place(sfx, pop(), F(2056), 0.8)
+place(sfx, stomp(), F(2049), 0.35)
+# scene 9: typing the key again, one tap per digit (loop lands on the frame-0 tap)
+for k in range(1, 11): place(sfx, tap(), F(2290 + (k - 1) * 5.6), 0.5)
 
-voice = load_voice()
-# duck the bed under the voice (envelope follower)
-ve = np.abs(voice); k = int(0.05 * SR)
-ve = np.convolve(ve, np.ones(k) / k, "same"); duck = 1 - 0.45 * np.clip(ve / (ve.max() * 0.25), 0, 1)
-mix = voice + music * duck * 1.4 + sfx * 0.5
-mix = np.tanh(mix * 0.95) / np.tanh(0.95)
-fade = int(0.04 * SR); mix[-fade:] *= np.linspace(1, 0, fade)
-pcm = (np.clip(mix, -1, 1) * 32767).astype(np.int16)
-with wave.open("mix_raw.wav", "wb") as w:
-    w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
-print("ok", len(pcm) / SR)
+write("music.wav", music)
+write("sfx.wav", sfx)
+print("stems ok", N / SR)
