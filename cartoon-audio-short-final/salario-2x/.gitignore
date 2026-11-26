@@ -4,3 +4,4 @@ node_modules
 web/lib/
 *.wav
 work/voice16.wav
+work/render*.log

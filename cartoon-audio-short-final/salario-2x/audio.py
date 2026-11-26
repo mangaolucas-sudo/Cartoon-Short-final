@@ -90,7 +90,8 @@ def drone(t0, t1, g=0.09, pulse=False):
 groove(0.0, 40.2)                 # story builds
 drone(40.25, 44.2)                # "Ricardo gelou"
 groove(44.2, 53.9, light=True)    # CTA
-drone(53.9, 62.95, 0.1, pulse=True)  # dona Célia
+drone(53.9, 62.95, 0.13, pulse=True)  # dona Célia: tension a bit louder
+for k in range(int((62.95 - 53.9) / beat)): place(music, drum('kick'), 53.9 + k * beat, 0.25)
 groove(62.95, DUR + 2)            # loop back into the hook (no fade)
 music = music[:N]
 
@@ -181,33 +182,80 @@ def whisper(d):
 def hum(d):
     n = int(d * SR); t = np.arange(n) / SR
     return (lp_fast(noise(d), 250) * 0.6 + np.sin(2 * np.pi * 60 * t) * 0.05).astype(np.float32)
-place(sfx, buzz(0.55), F(6), 0.6)
-for a, b in [(116, 429), (429, 665), (724, 1208), (1208, 1327)]: place(sfx, hum(F(b - a)), F(a), 0.18)
-place(sfx, whoosh(0.5), F(112), 0.6)
-place(sfx, pop(), F(200), 0.6); place(sfx, ting(), F(203), 0.35)
-place(sfx, buzz(0.5), F(292), 0.6); place(sfx, chime(), F(336), 0.6)
-place(sfx, whoosh(0.4), F(383), 0.6)
-place(sfx, buzz(0.6), F(429), 0.7); place(sfx, chime(), F(431), 0.6)
-place(sfx, thunk(160, 0.25), F(438), 0.6)
-for f in (520, 534, 547): place(sfx, pop(), F(f), 0.45)
-place(sfx, kaching(), F(588), 0.75)
-place(sfx, whoosh(0.4), F(662), 0.5)
-place(sfx, thunk(90, 0.35), F(689), 1.0)
-place(sfx, whoosh(0.4), F(721), 0.5)
-place(sfx, pop(), F(742), 0.45); place(sfx, pop(), F(770), 0.45)
-place(sfx, whoosh(0.4), F(845), 0.5)
-place(sfx, whisper(F(1007 - 850)), F(850), 0.6)
-place(sfx, whoosh(0.4), F(1022), 0.5)
-place(sfx, chime(), F(1055), 0.7)
-place(sfx, thunk(70, 0.4), F(1114), 0.6)
-place(sfx, sting(), F(1220), 0.85)
-place(sfx, whoosh(0.5), F(1325), 0.5)
-place(sfx, pop(), F(1433), 0.6); place(sfx, pop(), F(1471), 0.6); place(sfx, ting(), F(1500), 0.45)
-place(sfx, whoosh(0.5), F(1616), 0.5)
-place(sfx, ting(), F(1770), 0.3)
-place(sfx, sting(), F(1854), 0.85)
-place(sfx, whoosh(0.5), F(1886), 0.55)
-place(sfx, buzz(0.55), F(1900), 0.6)
+def tick(hi=True):
+    n = int(0.05 * SR); t = np.arange(n) / SR
+    return (hp_fast(noise(0.05), 2500) * np.exp(-t * 160) + np.sin(2 * np.pi * (2400 if hi else 1900) * t) * np.exp(-t * 120) * 0.6).astype(np.float32)
+def stampfx():
+    d = 0.45; n = int(d * SR); t = np.arange(n) / SR
+    s = np.pad(thunk(75, 0.4), (0, n - int(0.4 * SR))) * 1.1 + lp_fast(noise(d), 3500) * np.exp(-t * 45) * 0.9   # wood thud + paper slap
+    return s.astype(np.float32)
+def msg():  # generic two-note message pop (not any app's real sound)
+    out = np.zeros(int(0.35 * SR), np.float32)
+    for k, (f0, t0) in enumerate([(880, 0.0), (1175, 0.11)]):
+        n = int(0.16 * SR); t = np.arange(n) / SR; i = int(t0 * SR)
+        out[i:i + n] += (np.sin(2 * np.pi * f0 * t) * np.exp(-t * 22) + 0.3 * np.sin(4 * np.pi * f0 * t) * np.exp(-t * 35)).astype(np.float32)
+    return out * 0.6
+def boom(f0=48, d=1.4):
+    n = int(d * SR); t = np.arange(n) / SR
+    return (np.sin(2 * np.pi * f0 * t * (1 + 0.5 * np.exp(-t * 12))) * np.exp(-t * 2.5) * 1.2 + lp_fast(noise(d), 300) * np.exp(-t * 6) * 0.5).astype(np.float32)
+def dun(m, d=0.9):
+    n = int(d * SR); t = np.arange(n) / SR
+    s = brass([midi(m), midi(m + 3), midi(m - 12)], d) * 2.0 + np.sin(2 * np.pi * midi(m - 24) * t) * np.exp(-t * 3) * 0.8
+    return (s * np.exp(-t * 1.6)).astype(np.float32)
+def gulp():
+    d = 0.32; n = int(d * SR); t = np.arange(n) / SR
+    f = 160 + 260 * np.exp(-((t - 0.12) / 0.05) ** 2)
+    s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-((t - 0.13) / 0.07) ** 2) + lp_fast(noise(d), 900) * 0.15 * np.exp(-((t - 0.12) / 0.06) ** 2)
+    return s.astype(np.float32)
+def register():  # cash drawer rattle + bell
+    s = ting(); s[: int(0.15 * SR)] += (hp_fast(noise(0.15), 2500) * np.exp(-np.arange(int(0.15 * SR)) / SR * 25) * 0.7)
+    r = np.zeros(int(0.12 * SR), np.float32); r[::int(0.012 * SR)] = 1; r = lp_fast(r, 4000) * 0.8
+    return np.concatenate([r, s]).astype(np.float32)
+def rustle(d):
+    n = int(d * SR); t = np.arange(n) / SR
+    return (hp_fast(lp_fast(noise(d), 7000), 1800) * (0.4 + 0.6 * np.abs(np.sin(2 * np.pi * 4.5 * t))) * np.minimum(1, t / 0.05) * np.exp(-t * 1.4) * 0.6).astype(np.float32)
+def riser(d):
+    n = int(d * SR); t = np.arange(n) / SR
+    return (lp_fast(noise(d), 2500) * (t / d) ** 2 * 0.6).astype(np.float32)
+# 1) hook: one "plim" per Pix
+place(sfx, chime(), 0.0, 0.55); place(sfx, chime(), F(20), 0.55)
+for a, b in [(116, 429), (429, 665), (724, 1208), (1208, 1327)]: place(sfx, hum(F(b - a)), F(a), 0.15)
+place(sfx, whoosh(0.5), F(112), 0.5)
+place(sfx, pop(), F(200), 0.5); place(sfx, ting(), F(203), 0.3)
+place(sfx, buzz(0.5), F(292), 0.45); place(sfx, chime(), F(336), 0.55)
+place(sfx, whoosh(0.4), F(383), 0.5)
+place(sfx, buzz(0.6), F(429), 0.5); place(sfx, chime(), F(431), 0.55)
+place(sfx, thunk(160, 0.25), F(438), 0.5)
+for f in (520, 534, 547): place(sfx, pop(), F(f), 0.4)
+# 2) R$ 5.600: cha-ching
+place(sfx, register(), F(586), 0.8)
+place(sfx, whoosh(0.4), F(662), 0.45)
+# 3) stamp hits the paper
+place(sfx, stampfx(), F(689), 1.0)
+place(sfx, whoosh(0.4), F(721), 0.45)
+# 4) quiet clock tick-tock under the suspicion
+for k, f in enumerate(range(724, 846, 15)): place(sfx, tick(k % 2 == 0), F(f), 0.35)
+place(sfx, pop(), F(742), 0.35); place(sfx, pop(), F(770), 0.35)
+place(sfx, whoosh(0.4), F(845), 0.45)
+# 5) short whisper
+place(sfx, whisper(1.3), F(852), 0.7)
+place(sfx, whoosh(0.4), F(1022), 0.45)
+# 6) group message pop + deep suspense "tum"
+place(sfx, msg(), F(1055), 0.5); place(sfx, boom(52, 1.4), F(1113), 0.3)
+# 7) "Ricardo gelou": dun dun dun + dry gulp
+for k, (f, m) in enumerate([(1220, 45), (1232, 44), (1246, 41)]): place(sfx, dun(m, 1.1 if k == 2 else 0.5), F(f), 0.22)
+place(sfx, gulp(), F(1312), 0.45)
+# 8) split: whoosh as the boards enter, pop on each word, whoosh for the follow card
+place(sfx, whoosh(0.4), F(1378), 0.6); place(sfx, pop(), F(1433), 0.6); place(sfx, pop(), F(1471), 0.6)
+place(sfx, whoosh(0.4), F(1496), 0.5); place(sfx, ting(), F(1500), 0.3)
+place(sfx, whoosh(0.5), F(1616), 0.45)
+# 9) dona Célia: papers slip and fall
+place(sfx, ting(), F(1770), 0.25)
+place(sfx, sting(), F(1854), 0.3)
+place(sfx, rustle(1.1), F(1857), 0.8); place(sfx, lp_fast(noise(0.12), 2500) * np.exp(-np.arange(int(0.12 * SR)) / SR * 40), F(1880), 0.5)
+# 10) loop: soft whoosh into the hook, then a short riser that runs into the opening "plim" (no closing sound)
+place(sfx, whoosh(0.5), F(1886), 0.4)
+place(sfx, riser(F(1954 - 1928)), F(1928), 0.35)
 
 def wav(name, x):
     with wave.open(name, "wb") as w:

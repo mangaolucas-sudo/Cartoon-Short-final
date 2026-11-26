@@ -195,7 +195,8 @@ export const actorsAt = (f, T) => {
     }
     case 'celia': {
       const ex = f >= 1852 ? 'shock' : 'worried';
-      out.push(R(T, 'celia', { seed: 31, ...life(f, 31), L: 'hold', R: 'hold', prop: 'papers', expr: ex, look: f < 1700 ? -0.3 : 0, sweat: f >= 1830 ? q((f * 0.02) % 1, 2) : 0, blink: ex === 'shock' ? 0 : blinkAt(f, 31) }, CEL));
+      const drop = f >= 1856;
+      out.push(R(T, 'celia', { seed: 31, ...life(f, 31), L: drop ? 'cheek' : 'hold', R: drop ? 'cheek' : 'hold', prop: drop ? null : 'papers', expr: ex, look: f < 1700 ? -0.3 : 0, sweat: f >= 1830 ? q((f * 0.02) % 1, 2) : 0, blink: ex === 'shock' ? 0 : blinkAt(f, 31) }, CEL));
       break;
     }
   }
@@ -222,6 +223,11 @@ export const fxAt = (f, T) => {
     if (f >= 770 && f < 805) { const k = pop(f, 770, 6); out.push(FX('q2' + k, mark('?', '#ffffff'), [0.5, 1.76, 0.05], 0.2 * Math.max(0.05, k), { roll: -0.2 })); }
   }
   if (S.id === 'colega' && f < 1007) { const t = q((f * 0.04) % 1, 2); out.push(FX('sq' + t, squig(t), [0.02, 1.4, 0.3], 0.16)); }
+  if (S.id === 'celia' && f >= 1856) for (let i = 0; i < 5; i++) { // papers slip out of her hands and flutter down
+    const t = (f - 1856) / 30, y = Math.max(0.03, 1.12 - t * (0.9 + i * 0.12) - 0.4 * t * t), sx = Math.sin(t * 5 + i * 1.7) * 0.12;
+    out.push(FX('paper' + i, (p) => { const g = p.g; g.save(); g.fillStyle = '#fbf8ef'; g.strokeStyle = '#241726'; g.lineWidth = 10; g.fillRect(160, 380, 280, 360); g.strokeRect(160, 380, 280, 360); g.fillStyle = '#8a8fa0'; for (let k = 0; k < 6; k++) g.fillRect(195, 430 + k * 45, k === 5 ? 120 : 210, 12); g.restore(); },
+      [CEL[0] - 0.3 + i * 0.15 + sx, y, CEL[2] + 0.25], 0.16, { roll: q(Math.sin(t * 6 + i) * 0.7 + i * 0.4, 2), order: 6 }));
+  }
   if (S.id === 'gelou') for (let i = 0; i < 4; i++) { const t = ((f - 1208) * 0.012 + i * 0.25) % 1; out.push(FX('ice', mark('❄', '#cfe8ff'), [-0.9 + i * 0.6, 2.3 - t * 1.6, -0.6], 0.12, { alpha: 0.85 })); }
   return out;
 };

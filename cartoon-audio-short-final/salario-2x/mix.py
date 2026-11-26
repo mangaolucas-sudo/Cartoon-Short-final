@@ -12,8 +12,11 @@ def grms(x, rel=-40):
     thr = r.max() * 10 ** (rel / 20); g = r[r > thr]; return float(np.sqrt((g ** 2).mean())) if len(g) else 1e-9
 v, m, s = (load(p) for p in sys.argv[1:4]); N = len(v)
 m = np.pad(m, (0, max(0, N - len(m))))[:N]; s = np.pad(s, (0, max(0, N - len(s))))[:N]
-rv = grms(v); m *= 0.5 * rv / grms(m)
-gs = 0.5 * rv / grms(s); gs = min(gs, 0.7 * np.abs(v).max() / max(np.abs(s).max(), 1e-9)); s *= gs
+rv = grms(v)
+def wmax(x, w=int(0.4 * SR)): k = len(x) // w; return float(np.sqrt((x[:k * w].reshape(k, w) ** 2).mean(1)).max())
+# static linear gains: music at 50% of the voice (-6 dB) but no 0.4 s window above -4 dB; SFX: no window above -6 dB, peaks <= 0.7x voice peak
+m *= min(0.5 * rv / grms(m), 10 ** (-4 / 20) * rv / wmax(m))
+s *= min(0.42 * rv / grms(s), 10 ** (-6 / 20) * rv / wmax(s), 0.7 * np.abs(v).max() / max(np.abs(s).max(), 1e-9))
 db = lambda a, b: 20 * np.log10(a / b)
 print(f"music vs voice: {db(grms(m), rv):+.1f} dB | sfx vs voice: {db(grms(s), rv):+.1f} dB | sfx peak/voice peak {np.abs(s).max() / np.abs(v).max():.2f}")
 x = v + m + s
