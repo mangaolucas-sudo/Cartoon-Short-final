@@ -76,6 +76,7 @@ export const camAt = (f) => {
   const fov = 2 * Math.atan(Math.tan((k.fov * Math.PI / 180) / 2) / z) * 180 / Math.PI;
   const c = { pos: [...k.pos], look: [...k.look], fov, roll: 0, zoom: z };
   for (const kk of KICKS) { const d = f - kk.f; if (d >= 0 && d < 7) { const s = (d % 2 ? -1 : 1) * kk.a * (1 - d / 7); c.look = [c.look[0], c.look[1] + s * 3, c.look[2] + s * 2]; } }
+  if (S.id === 'boleto') { const d = 0.012 * (f - S.a) / (S.b - S.a); c.pos[0] += d; c.look[0] += d; } // slow lateral drift (no zoom) so the frame never freezes
   c.flash = f >= 386 && f < 392 ? (1 - (f - 386) / 6) * 0.9 : 0;
   if (S.id === 'hook' || S.id === 'loop' || S.id === 'boleto') c.shadowAt = [-60.1, TABLE, 0];
   else if (S.id === 'group' || S.id === 'app') c.shadowAt = [0, 1, 0];
