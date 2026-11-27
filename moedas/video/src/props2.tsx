@@ -1,11 +1,12 @@
 import React from 'react';
 import {INK} from './props';
+import {em, fitProps} from './fit';
 
 const F = 'Inter Black, Inter, sans-serif';
 export const T: React.FC<{x: number; y: number; s: number; fill?: string; children: React.ReactNode; anchor?: string;
-  stroke?: string; sw?: number; ls?: number; op?: number}> =
-  ({x, y, s, fill = INK, children, anchor = 'middle', stroke, sw = 0, ls = -0.5, op = 1}) => (
-    <text x={x} y={y} fontSize={s} fontFamily={F} fontWeight={900} fill={fill} textAnchor={anchor as any} opacity={op}
+  stroke?: string; sw?: number; ls?: number; op?: number; max?: number}> =
+  ({x, y, s, fill = INK, children, anchor = 'middle', stroke, sw = 0, ls = -0.5, op = 1, max}) => (
+    <text x={x} y={y} fontSize={s} {...fitProps(children, s, max)} fontFamily={F} fontWeight={900} fill={fill} textAnchor={anchor as any} opacity={op}
       stroke={stroke ?? 'none'} strokeWidth={sw} paintOrder="stroke fill" strokeLinejoin="round"
       style={{letterSpacing: ls}}>{children}</text>
   );
@@ -69,17 +70,24 @@ export const Note: React.FC<{w?: number; name: string; head?: string; tail?: str
         <ellipse cx={120} cy={138} rx={68} ry={78} fill="rgba(255,255,255,0.35)" stroke={k.d} strokeWidth={6} />
         <path d="M120 96 l12 26 28 3 -21 19 6 28 -25 -14 -25 14 6 -28 -21 -19 28 -3 Z" fill={k.d} opacity={0.7} />
         <rect x={210} y={40} width={286} height={50} rx={10} fill={k.d} />
-        <T x={353} y={78} s={small ? 30 : 38} fill="#fff" ls={1}>{name}</T>
+        <T x={353} y={78} s={small ? 30 : 38} fill="#fff" ls={1} max={266}>{name}</T>
         {(() => {
-          if (!tail) { const txt = k.sym + ' ' + head; return <T x={350} y={200} s={Math.min(110, 560 / (txt.length * 0.6))} fill={INK}>{txt}</T>; }
-          const sz = Math.min(110, 440 / ((head.length + tail.length) * 0.6));
-          const tw = tail.length * 0.6 * sz;
-          const cx = 494 - tw;
+          // área do valor: x 200..496 (à direita do retrato) — nada passa da borda da cédula
+          const L = 200, Rr = 496, avail = Rr - L;
+          if (!tail) {
+            const txt = k.sym + ' ' + head;
+            const sz = Math.min(104, avail / em(txt));
+            return <T x={(L + Rr) / 2} y={200} s={sz} fill={INK} max={avail}>{txt}</T>;
+          }
+          const sz = Math.min(104, avail / em(head + tail));
+          const hw = em(head) * sz, tw = em(tail) * sz;
+          const x0 = (L + Rr) / 2 - (hw + tw) / 2;
+          const cx = x0 + hw;
           return <>
-            <T x={cx - 4} y={200} s={sz} fill={INK} anchor="end">{head}</T>
-            <T x={cx - 4 - (head.length * 0.6 * sz)} y={128} s={34} fill={k.d} anchor="start">{k.sym}</T>
-            <g transform={`translate(${cx + 4 + cut * 40} ${200 + cut * cut * 520}) rotate(${cut * 70})`} opacity={1 - Math.max(0, cut - 0.7) / 0.3}>
-              <T x={0} y={0} s={sz} fill="#B3261E" anchor="start">{tail}</T>
+            <T x={x0} y={128} s={34} fill={k.d} anchor="start">{k.sym}</T>
+            <text x={x0} y={200} fontSize={sz} fontFamily={F} fontWeight={900} fill={INK} textLength={hw} lengthAdjust="spacingAndGlyphs">{head}</text>
+            <g transform={`translate(${cx + cut * 40} ${200 + cut * cut * 520}) rotate(${cut * 70})`} opacity={1 - Math.max(0, cut - 0.7) / 0.3}>
+              <text x={0} y={0} fontSize={sz} fontFamily={F} fontWeight={900} fill="#B3261E" textLength={tw} lengthAdjust="spacingAndGlyphs">{tail}</text>
             </g>
             {scissorsLine > 0 && <path d={`M${cx} 16 V${16 + 230 * scissorsLine}`} stroke="#fff" strokeWidth={6} strokeDasharray="14 10" />}
           </>;
@@ -128,7 +136,7 @@ export const Product: React.FC<{w?: number; label?: string}> = ({w = 360, label 
       <path d="M40 60 Q180 20 320 60 L318 110 Q180 80 42 110 Z" fill="#E0662A" />
       <rect x={60} y={150} width={240} height={110} rx={14} fill="#E0662A" />
     </g>
-    <T x={180} y={230} s={66} fill="#fff">{label}</T>
+    <T x={180} y={230} s={66} fill="#fff" max={220}>{label}</T>
     <T x={180} y={320} s={40} fill="#9A5520">5 KG</T>
     {[0, 1, 2, 3, 4].map((i) => <ellipse key={i} cx={110 + i * 35} cy={370 + (i % 2) * 10} rx={10} ry={5} fill="#E8D7B0" />)}
   </svg>
@@ -137,7 +145,7 @@ export const Product: React.FC<{w?: number; label?: string}> = ({w = 360, label 
 export const Sticker: React.FC<{w?: number; text: string; color?: string}> = ({w = 300, text, color = '#FFE07A'}) => (
   <svg width={w} height={w * 0.42} viewBox="0 0 300 126" style={{overflow: 'visible'}}>
     <rect x={5} y={5} width={290} height={116} rx={14} fill={color} stroke={INK} strokeWidth={8} />
-    <T x={150} y={84} s={58}>{text}</T>
+    <T x={150} y={84} s={58} max={258}>{text}</T>
   </svg>
 );
 
@@ -149,7 +157,7 @@ export const Envelope: React.FC<{w?: number; open?: number}> = ({w = 360, open =
       <rect x={10} y={40} width={340} height={200} rx={14} fill="#E9C88E" />
       <path d={`M10 50 L180 ${open > 0 ? 20 : 160} L350 50`} fill="#D9B070" />
     </g>
-    <T x={180} y={215} s={44} fill="#7A4A1A">SALÁRIO</T>
+    <T x={180} y={215} s={44} fill="#7A4A1A" max={300}>SALÁRIO</T>
   </svg>
 );
 
@@ -160,12 +168,12 @@ export const Chip: React.FC<{w?: number; name: string; year: string; tag?: strin
     <svg width={w} height={w * 0.26} viewBox="0 0 540 140" style={{overflow: 'visible'}}>
       <rect x={6} y={6} width={528} height={128} rx={22} fill={k.c} stroke={INK} strokeWidth={10} />
       <rect x={20} y={20} width={130} height={100} rx={14} fill={k.d} />
-      <T x={85} y={86} s={40} fill="#fff">{year}</T>
-      <T x={170} y={92} s={name.length > 10 ? 46 : 58} anchor="start" fill={INK}>{name}</T>
+      <T x={85} y={86} s={40} fill="#fff" max={116}>{year}</T>
+      <T x={168} y={92} s={58} anchor="start" fill={INK} max={352}>{name}</T>
       {tag && (
         <g transform={`translate(470 0) rotate(12) scale(${tagS})`}>
           <rect x={-120} y={-40} width={240} height={70} rx={12} fill="#E5322D" stroke={INK} strokeWidth={7} />
-          <T x={0} y={12} s={40} fill="#fff">{tag}</T>
+          <T x={0} y={12} s={40} fill="#fff" max={220}>{tag}</T>
         </g>
       )}
     </svg>
@@ -178,8 +186,8 @@ export const CommentT: React.FC<{w?: number; text: string; user: string; color?:
     <path d="M20 10 H400 a14 14 0 0 1 14 14 V120 a14 14 0 0 1 -14 14 H100 L60 170 L66 134 H20 a14 14 0 0 1 -14 -14 V24 a14 14 0 0 1 14 -14 Z"
       fill={color} stroke={INK} strokeWidth={9} strokeLinejoin="round" />
     <circle cx={48} cy={52} r={22} fill="#E39A52" stroke={INK} strokeWidth={5} />
-    <T x={82} y={62} s={26} anchor="start" fill="#8A6A5A">{user}</T>
-    <T x={32} y={112} s={36} anchor="start">{text}</T>
+    <T x={82} y={62} s={26} anchor="start" fill="#8A6A5A" max={310}>{user}</T>
+    <T x={32} y={112} s={36} anchor="start" max={370}>{text}</T>
   </svg>
 );
 
@@ -194,7 +202,7 @@ export const TinBox: React.FC<{w?: number; open: number}> = ({w = 460, open}) =>
       <rect x={40} y={150} width={380} height={200} rx={16} fill="#C9553A" />
       <rect x={70} y={190} width={320} height={120} rx={12} fill="#E7B65C" />
     </g>
-    <T x={230} y={270} s={44} fill="#7A2E1A">GUARDADOS</T>
+    <T x={230} y={270} s={44} fill="#7A2E1A" max={300}>GUARDADOS</T>
   </svg>
 );
 
@@ -225,14 +233,14 @@ export const Durations: React.FC<{w?: number; k: number; win: number}> = ({w = 6
   return (
     <svg width={w} height={w * 1.05} viewBox="0 0 600 630" style={{overflow: 'visible'}}>
       <rect x={6} y={6} width={588} height={618} rx={30} fill="rgba(30,14,6,0.85)" stroke={INK} strokeWidth={10} />
-      <T x={300} y={64} s={36} fill="#FFD59A">ANOS DE CADA MOEDA</T>
+      <T x={300} y={64} s={36} fill="#FFD59A" max={540}>ANOS DE CADA MOEDA</T>
       {items.map(([n, v], i) => {
         const kk = Math.max(0, Math.min(1, k * 8 - i));
         const real = i === items.length - 1;
-        const len = (v / 32) * 330 * kk * (real ? 1 + 0.05 * win : 1);
+        const len = (v / 32) * 300 * kk * (real ? 1 + 0.04 * win : 1);
         return (
           <g key={i} transform={`translate(0 ${100 + i * 64})`} opacity={kk > 0 ? 1 : 0.25}>
-            <T x={190} y={38} s={30} anchor="end" fill={real ? '#FFE11A' : '#fff'}>{n}</T>
+            <T x={190} y={38} s={30} anchor="end" fill={real ? '#FFE11A' : '#fff'} max={170}>{n}</T>
             <rect x={205} y={8} width={Math.max(6, len)} height={40} rx={8}
               fill={real ? '#5FBDB1' : (CUR[n.replace('CRUZ.', 'CRUZEIRO').replace('CR.', 'CRUZEIRO')]?.c ?? '#E39A52')}
               stroke={INK} strokeWidth={5} />

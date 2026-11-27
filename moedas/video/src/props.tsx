@@ -1,11 +1,12 @@
 import React from 'react';
+import {fitProps} from './fit';
 
 export const INK = '#1E120B';
 const F = 'Inter Black, Inter, sans-serif';
 
 const T: React.FC<{x: number; y: number; s: number; fill?: string; children: React.ReactNode; anchor?: string; w?: number}> =
-  ({x, y, s, fill = INK, children, anchor = 'middle', w = 900}) => (
-    <text x={x} y={y} fontSize={s} fontFamily={F} fontWeight={900} fill={fill} textAnchor={anchor as any}
+  ({x, y, s, fill = INK, children, anchor = 'middle', w}) => (
+    <text x={x} y={y} fontSize={s} {...fitProps(children, s, w)} fontFamily={F} fontWeight={900} fill={fill} textAnchor={anchor as any}
       stroke="none" style={{letterSpacing: -0.5}}>{children}</text>
   );
 
@@ -59,9 +60,9 @@ export const Calendar: React.FC<{top: string; day: string; sub?: string; w?: num
         <rect x={90} y={6} width={26} height={60} rx={13} fill="#8C8C8C" />
         <rect x={324} y={6} width={26} height={60} rx={13} fill="#8C8C8C" />
       </g>
-      <T x={220} y={106} s={52} fill="#fff">{top}</T>
-      <T x={220} y={330} s={200}>{day}</T>
-      {sub && <T x={220} y={410} s={44} fill="#7A4A2A">{sub}</T>}
+      <T x={220} y={106} s={52} fill="#fff" w={380}>{top}</T>
+      <T x={220} y={330} s={200} w={380}>{day}</T>
+      {sub && <T x={220} y={410} s={44} fill="#7A4A2A" w={390}>{sub}</T>}
       {circle > 0 && (
         <ellipse cx={220} cy={262} rx={150} ry={118} fill="none" stroke="#E5322D" strokeWidth={14}
           strokeDasharray={900} strokeDashoffset={900 * (1 - circle)} transform="rotate(-8 220 262)" strokeLinecap="round" />
@@ -183,7 +184,7 @@ export const AccountCard: React.FC<{w?: number; label: string; color: string}> =
 export const Stamp: React.FC<{text: string; w?: number; color?: string}> = ({text, w = 520, color = '#E5322D'}) => (
   <svg width={w} height={w * 0.32} viewBox="0 0 520 166">
     <rect x={10} y={10} width={500} height={146} rx={18} fill="rgba(255,255,255,0.15)" stroke={color} strokeWidth={14} />
-    <T x={260} y={118} s={100} fill={color}>{text}</T>
+    <T x={260} y={118} s={100} fill={color} w={460}>{text}</T>
   </svg>
 );
 
@@ -275,7 +276,7 @@ export const RealNote: React.FC<{w?: number}> = ({w = 520}) => (
     <rect x={30} y={30} width={460} height={200} rx={14} fill="none" stroke="#2D7F76" strokeWidth={6} />
     <circle cx={150} cy={130} r={72} fill="#8ED8CE" stroke="#2D7F76" strokeWidth={6} />
     <T x={150} y={156} s={74} fill="#1F5F58">R$</T>
-    <T x={370} y={150} s={80} fill="#fff">1994</T>
+    <T x={370} y={150} s={80} fill="#fff" w={220}>1994</T>
   </svg>
 );
 
@@ -283,7 +284,7 @@ export const RealNote: React.FC<{w?: number}> = ({w = 520}) => (
 export const FollowBtn: React.FC<{w?: number; done: boolean}> = ({w = 460, done}) => (
   <svg width={w} height={w * 0.3} viewBox="0 0 460 138" style={{overflow: 'visible'}}>
     <rect x={6} y={6} width={448} height={126} rx={63} fill={done ? '#5A5F66' : '#FE2C55'} stroke={INK} strokeWidth={10} />
-    <T x={230} y={90} s={62} fill="#fff">{done ? 'SEGUINDO ✓' : '+ SEGUIR'}</T>
+    <T x={230} y={90} s={62} fill="#fff" w={400}>{done ? 'SEGUINDO ✓' : '+ SEGUIR'}</T>
   </svg>
 );
 

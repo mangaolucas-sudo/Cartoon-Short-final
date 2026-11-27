@@ -6,6 +6,7 @@ export type Expr = 'choque' | 'neutro' | 'preocupado' | 'triste' | 'feliz' | 'ap
 import * as P from './props';
 import * as Q from './props2';
 import {Backdrop} from './Scenery';
+import {fitSize} from './fit';
 
 type Word = {w: string; s: number; e: number};
 type BgItem = {at: number; kind: string; v: number};
@@ -52,11 +53,13 @@ const NUM = '2.750.000.000.000.000.000';
 const BigNumber: React.FC<{n: number; size?: number; punch?: number; y?: number; color?: string; fit?: boolean}> =
   ({n, size = 150, punch = 0, y = 720, color = '#FFE11A', fit = false}) => {
     const txt = NUM.slice(0, Math.max(1, n));
-    const sc = fit ? Math.min(1, 1000 / (NUM.length * size * 0.6)) : 1;
+    // sempre inteiro na tela: a fonte diminui conforme os dígitos aumentam (área segura 800 px)
+    const fs = fitSize(txt, size, 800 / (1 + Math.max(0, punch)));
+    const sc = 1;
     return (
       <div style={{position: 'absolute', left: 540, top: y, transform: `translate(-50%, -50%) scale(${(1 + punch) * sc})`,
-        whiteSpace: 'nowrap', font: `900 ${size}px/1 Inter`, color, letterSpacing: -2,
-        WebkitTextStroke: `${size * 0.16}px #1A0E06`, paintOrder: 'stroke fill',
+        whiteSpace: 'nowrap', font: `900 ${fs}px/1 Inter`, color, letterSpacing: -2,
+        WebkitTextStroke: `${Math.max(10, fs * 0.16)}px #1A0E06`, paintOrder: 'stroke fill',
         textShadow: `0 10px 0 rgba(60,20,0,0.55), 0 0 60px rgba(255,170,40,${0.35 + punch})`}}>
         {txt.split('').map((ch, i) => (
           <span key={i} style={{display: 'inline-block', transform: i === txt.length - 1 && n < NUM.length ? 'scale(1.15)' : 'none'}}>{ch}</span>
@@ -89,7 +92,7 @@ const coinScene = (x: Ctx, full: boolean) => {
   const digits: number[] = full ? q.digits.map(fr) : [0];
   const n = full ? lastIdx(digits, f) + 1 : 1;
   const burst = full ? c.reis : Infinity;
-  const punch = f >= burst ? 0.22 * Math.exp(-(f - burst) / 5) * Math.cos((f - burst) * 0.8) : 0;
+  const punch = f >= burst ? 0.12 * Math.exp(-(f - burst) / 5) * Math.cos((f - burst) * 0.8) : 0;
   const spin = 0.55 * Math.sin((2 * Math.PI * t) / 3.2);
   return (
     <>
@@ -139,7 +142,7 @@ const DEFS: Record<string, Def> = {
             </At>;
           })}
           {n > 0 && (
-            <At x={150} y={760} s={f >= c.oito ? pop(f, c.oito) * 1.15 : 1} r={-8}>
+            <At x={200} y={760} s={f >= c.oito ? pop(f, c.oito) * 1.1 : 1} r={-8}>
               <div style={{background: '#E5322D', border: `8px solid ${P.INK}`, borderRadius: 24, padding: '4px 26px',
                 font: '900 92px Inter', color: '#fff'}}>{n}×</div>
             </At>
@@ -177,7 +180,7 @@ const DEFS: Record<string, Def> = {
               </At>}
               <At x={330 + (i === 3 && f >= c.cz2 ? Math.sin((f - c.cz2) * 1.4) * 14 * Math.exp(-(f - c.cz2) / 12) : 0)}
                 y={650 + i * 170} s={pop(f, a)}>
-                <Q.Chip w={540} name={n} year={y} tag={i === 3 ? 'DE NOVO?!' : undefined} tagS={i === 3 ? pop(f, c.cz2 + 6) : 1} />
+                <Q.Chip w={500} name={n} year={y} tag={i === 3 ? 'DE NOVO?!' : undefined} tagS={i === 3 ? pop(f, c.cz2 + 6) : 1} />
               </At>
             </React.Fragment>
           ))}
@@ -202,15 +205,15 @@ const DEFS: Record<string, Def> = {
       // linha do tempo
       const tl = f < c.quase && (
         <div style={{position: 'absolute', left: 0, top: 0}}>
-          <At x={540} y={660} sh={false}><div style={{width: 920, height: 14, background: '#FFE2B0', border: `5px solid ${P.INK}`, borderRadius: 8}} /></At>
+          <At x={540} y={600} sh={false}><div style={{width: 840, height: 14, background: '#FFE2B0', border: `5px solid ${P.INK}`, borderRadius: 8}} /></At>
           {TL.map(([n, y], i) => f >= cs[i] && (
-            <At key={i} x={150 + i * 260} y={660} s={pop(f, cs[i])}>
-              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: 250}}>
+            <At key={i} x={200 + i * 227} y={600} s={pop(f, cs[i])}>
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: 215}}>
                 <div style={{width: 50, height: 50, borderRadius: 25, background: i === lastIdx(cs, f) ? '#FFE11A' : Q.CUR[n].c,
                   border: `7px solid ${P.INK}`, marginTop: 92}} />
                 <div style={{font: '900 50px Inter', color: '#fff', WebkitTextStroke: `10px ${P.INK}`, paintOrder: 'stroke fill', marginTop: 4}}>{y}</div>
-                <div style={{font: '900 34px Inter', color: Q.CUR[n].c, WebkitTextStroke: `8px ${P.INK}`, paintOrder: 'stroke fill',
-                  textAlign: 'center', lineHeight: 1}}>{n}</div>
+                <div style={{font: '900 32px Inter', color: Q.CUR[n].c, WebkitTextStroke: `8px ${P.INK}`, paintOrder: 'stroke fill',
+                  textAlign: 'center', lineHeight: 1.05, width: 200}}>{n}</div>
               </div>
             </At>
           ))}
@@ -227,8 +230,8 @@ const DEFS: Record<string, Def> = {
         return (
           <>
             {tl}
-            <At x={330} y={1060} s={done ? pop(f, sn + 9) : 1} r={-3}>
-              <Q.Note w={540} name={done ? to : from} head="1" tail={!done && cut ? '.000' : (done ? '' : '')} cut={k} scissorsLine={cut && !done ? mv(f, cs[i], 0, 1, 6) : 0} />
+            <At x={340} y={1060} s={done ? pop(f, sn + 9) : 1} r={-3}>
+              <Q.Note w={500} name={done ? to : from} head="1" tail={!done && cut ? '.000' : (done ? '' : '')} cut={k} scissorsLine={cut && !done ? mv(f, cs[i], 0, 1, 6) : 0} />
             </At>
             {cut && f < sn + 14 && <At x={sciX} y={1000} r={90}><Q.Scissors w={300} open={open} /></At>}
             {!cut && f >= sn && <At x={340} y={1060} r={-14} s={mv(f, sn, 1.8, 1, 5)}><P.Stamp text="TROCA 1:1" w={440} color="#E5322D" /></At>}
@@ -240,8 +243,8 @@ const DEFS: Record<string, Def> = {
         const open = f < c.zeros ? 0.5 + 0.5 * Math.sin((f - c.quase) * 0.35) : mv(f, c.zeros, 0, 0.7, 5);
         return (
           <>
-            <At x={330} y={1040} s={pop(f, c.quase) * (f >= c.zeros ? 1 + 0.06 * Math.exp(-(f - c.zeros) / 3) : 1)} r={-2}>
-              <Q.Note w={620} name="CRUZEIRO" head="1.000" tail={k < 1 ? '.000' : ''} cut={k} scissorsLine={mv(f, c.quase, 0, 1, 10)} />
+            <At x={350} y={1040} s={pop(f, c.quase) * (f >= c.zeros ? 1 + 0.04 * Math.exp(-(f - c.zeros) / 3) : 1)} r={-2}>
+              <Q.Note w={540} name="CRUZEIRO" head="1.000" tail={k < 1 ? '.000' : ''} cut={k} scissorsLine={mv(f, c.quase, 0, 1, 10)} />
             </At>
             {f < c.zeros + 20 && (
               <At x={mv(f, c.quase, 900, 560, 12)} y={mv(f, c.zeros - 4, 700, 980, 4)} r={90} s={1.3}><Q.Scissors w={320} open={open} /></At>
@@ -289,10 +292,10 @@ const DEFS: Record<string, Def> = {
               </At>
             ))}
             <svg width={1080} height={1920} style={{position: 'absolute', left: 0, top: 0, overflow: 'visible'}}>
-              <Person P={REPOSITOR} x={mv(f, s0, -200, 130, 14)} y={1470} s={0.66} t={t} expr={press ? 'smug' : 'smile'} look={0.8}
+              <Person P={REPOSITOR} x={mv(f, s0, -200, 170, 14)} y={1470} s={0.66} t={t} expr={press ? 'smug' : 'smile'} look={0.8}
                 walk={f < s0 + 14 ? (f - s0) / 10 : null} pose={{L: [10, 0], R: [62 + press * 22, -48]}} holdR={<HeldGun press={press} />} />
             </svg>
-            {f >= c.remarca && <At x={120} y={700 - Math.abs(Math.sin(t * 6)) * 30} s={pop(f, c.remarca)}><P.ArrowUp w={110} /></At>}
+            {f >= c.remarca && <At x={170} y={700 - Math.abs(Math.sin(t * 6)) * 30} s={pop(f, c.remarca)}><P.ArrowUp w={110} /></At>}
           </>
         );
       }
@@ -302,10 +305,10 @@ const DEFS: Record<string, Def> = {
           <At x={330 + (f >= c.corria ? Math.sin(f * 1.3) * 6 : 0)} y={1120} s={pop(f, c.salario)}><Q.Envelope w={420} open={mv(f, c.corria, 0, 1, 8)} /></At>
           {f >= c.corria + 4 && (
             <At x={330 + dust * 60} y={mv(f, c.corria + 4, 1040, 820, 10)} r={-6 + Math.sin(t * 5) * 4} o={1 - dust}>
-              <div style={{clipPath: `inset(0 ${dust * 100}% 0 0)`}}><Q.Note w={460} name="CRUZEIRO REAL" head="50.000" /></div>
+              <div style={{clipPath: `inset(0 ${dust * 100}% 0 0)`}}><Q.Note w={440} name="CRUZEIRO REAL" head="50.000" /></div>
             </At>
           )}
-          {f >= c.gastar && f < c.po && <At x={210} y={780} s={pop(f, c.gastar)} r={-10}>
+          {f >= c.gastar && f < c.po && <At x={330} y={650} s={pop(f, c.gastar)} r={-10}>
             <div style={{background: '#2FA36B', border: `8px solid ${P.INK}`, borderRadius: 18, padding: '6px 20px', font: '900 54px Inter', color: '#fff'}}>CORRE!</div>
           </At>}
           {dust > 0 && Array.from({length: 70}, (_, i) => {
@@ -357,7 +360,7 @@ const DEFS: Record<string, Def> = {
           <>
             <At x={330} y={1000} s={pop(f, s0) * (1 + 0.04 * beat)}>
               <div style={{background: '#1A0C06', border: '10px solid #FF6A2A', borderRadius: 26, padding: '10px 40px',
-                font: '900 170px Inter', color: Math.floor(t * 2) % 2 ? '#FF6A2A' : '#FFD34A', boxShadow: `0 0 ${60 + beat * 60}px rgba(255,120,40,0.7)`}}>
+                font: '900 150px Inter', color: Math.floor(t * 2) % 2 ? '#FF6A2A' : '#FFD34A', boxShadow: `0 0 ${60 + beat * 60}px rgba(255,120,40,0.7)`}}>
                 {f >= c.ano + 10 ? '1994' : '1993'}</div>
             </At>
             <At x={330} y={1180} s={pop(f, s0 + 6)} sh={false}>
@@ -370,7 +373,7 @@ const DEFS: Record<string, Def> = {
       if (f < c.trocar) {
         return (
           <>
-            <At x={330} y={1020} s={pop(f, c.real) * 1.05} r={-5 + Math.sin((f - c.real) / 10) * 3}><P.RealNote w={580} /></At>
+            <At x={330} y={1020} s={pop(f, c.real) * 1.05} r={-5 + Math.sin((f - c.real) / 10) * 3}><P.RealNote w={500} /></At>
             {[0, 1, 2, 3].map((k) => <At key={k} x={330 + Math.cos(k * 1.7) * 300} y={1000 + Math.sin(k * 1.7) * 200}
               s={0.5 + 0.5 * Math.abs(Math.sin(t * 4 + k))} sh={false}><Q.Spark s={80} /></At>)}
           </>
@@ -385,13 +388,13 @@ const DEFS: Record<string, Def> = {
           {shrink > 0.02 && (
             <div style={{position: 'absolute', left: 330, top: 1310, transform: `translate(-50%, -100%) scale(${shrink})`, transformOrigin: '50% 100%'}}>
               <div style={{position: 'relative', width: 460, height: 460}}>
-                <div style={{position: 'absolute', left: 0, bottom: 0}}><Q.Stack w={460} n={Math.max(1, (cnt / 2750) * 34)} /></div>
+                <div style={{position: 'absolute', left: 0, bottom: 0}}><Q.Stack w={460} n={Math.max(1, (cnt / 2750) * 26)} /></div>
               </div>
             </div>
           )}
           {shrink > 0.02 && f >= ca && (
-            <At x={330} y={1310 - 460 * shrink + (350 - (Math.round(Math.max(1, (cnt / 2750) * 34)) - 1) * 16) * 1.095 * shrink - 70} s={shrink * (f >= c.n2750 ? pop(f, c.n2750) : 1)}>
-              <div style={{background: '#1A0C06', border: '8px solid #FFE11A', borderRadius: 20, padding: '4px 24px', font: '900 76px Inter', color: '#FFE11A', whiteSpace: 'nowrap'}}>
+            <At x={330} y={1310 - 460 * shrink + (350 - (Math.round(Math.max(1, (cnt / 2750) * 26)) - 1) * 16) * 1.095 * shrink - 70} s={shrink * (f >= c.n2750 ? pop(f, c.n2750) : 1)}>
+              <div style={{background: '#1A0C06', border: '8px solid #FFE11A', borderRadius: 20, padding: '4px 24px', font: '900 66px Inter', color: '#FFE11A', whiteSpace: 'nowrap'}}>
                 CR$ {brl(cnt)}</div>
             </At>
           )}
@@ -414,7 +417,7 @@ const DEFS: Record<string, Def> = {
         return (
           <>
             {lines.map((l, i) => f >= ts[i] && (
-              <div key={i} style={{position: 'absolute', left: 110, top: 640 + i * 120, font: '900 70px Inter', color: '#F2F4EA', opacity: 0.92,
+              <div key={i} style={{position: 'absolute', left: 110, top: 640 + i * 110, font: '900 56px Inter', color: '#F2F4EA', opacity: 0.92,
                 clipPath: `inset(0 ${100 - mv(f, ts[i], 0, 100, 10)}% 0 0)`, textShadow: '0 0 6px rgba(255,255,255,0.4)', letterSpacing: 2,
                 whiteSpace: 'nowrap'}}>{l}</div>
             ))}
@@ -422,7 +425,7 @@ const DEFS: Record<string, Def> = {
         );
       }
       if (f < c.durou) {
-        const punch = 0.2 * Math.exp(-(f - c.conta) / 5) * Math.cos((f - c.conta) * 0.8);
+        const punch = 0.12 * Math.exp(-(f - c.conta) / 5) * Math.cos((f - c.conta) * 0.8);
         return (
           <>
             <BigNumber n={NUM.length} punch={punch} fit size={150} y={760} />
@@ -439,9 +442,9 @@ const DEFS: Record<string, Def> = {
       const win = f >= c.trinta ? Math.abs(Math.sin((f - c.trinta) / 5)) : 0;
       return (
         <>
-          <At x={340} y={990} s={pop(f, c.durou)}><Q.Durations w={620} k={k} win={win} /></At>
-          {f >= c.trinta && <At x={330} y={700} s={pop(f, c.trinta) * (1 + 0.05 * Math.sin(t * 8))}>
-            <div style={{fontSize: 150}}>🏆</div></At>}
+          <At x={365} y={990} s={pop(f, c.durou)}><Q.Durations w={560} k={k} win={win} /></At>
+          {f >= c.trinta && <At x={590} y={640} s={pop(f, c.trinta) * (1 + 0.05 * Math.sin(t * 8))}>
+            <div style={{fontSize: 110}}>🏆</div></At>}
         </>
       );
     },
@@ -455,7 +458,7 @@ const DEFS: Record<string, Def> = {
       const s0 = tap - 26;
       return (
         <>
-          <At x={330} y={1000} s={pop(f, s0) * press}><P.FollowBtn w={540} done={f >= tap + 2} /></At>
+          <At x={330} y={1000} s={pop(f, s0) * press}><P.FollowBtn w={500} done={f >= tap + 2} /></At>
           {vis(f, tap - 10, tap + 14) && (
             <At x={mv(f, tap - 10, 470, 400, 10)} y={mv(f, tap - 10, 1180, 1040, 10)} sh={false}>
               <div style={{fontSize: 110}}>👆</div>
@@ -653,19 +656,18 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
     R: [a.R[0] + (b.R[0] - a.R[0]) * mixE, a.R[1] + (b.R[1] - a.R[1]) * mixE]});
   let bPose = lerpP(pp.pose, pc.pose);
   let bFace: Face = pc.face;
-  let bx = 820, bWalk: number | null = null;
+  let bx = 800, bWalk: number | null = null;
   // entradas andando
   const walkIns: Record<string, number> = {s2: s0, s6: s0, s7: c.trocar, s8: c.durou, s9: s0};
   const wi = walkIns[sc.id];
   if (wi !== undefined && f >= wi && f < wi + 20) {
     const k = (f - wi) / 20;
-    bx = 1380 - 560 * Easing.out(Easing.quad)(k); bWalk = (f - wi) / 10; bPose = POSES.walk; bFace = 'smile';
+    bx = 1380 - 580 * Easing.out(Easing.quad)(k); bWalk = (f - wi) / 10; bPose = POSES.walk; bFace = 'smile';
   }
   // correndo (salário)
   if (sc.id === 's5' && f >= c.corria && f < c.po) { bWalk = f / 6; bPose = POSES.run; bFace = 'shock'; }
   const coinHeld = !!bcur.coin;
   const bump = bcur.at === 0 ? 1 : interpolate(f, [bcur.at, bcur.at + 6], [0.96, 1], {...clamp, easing: eo});
-  const nameTag = sc.id === 's1' && f >= 12 && f < c.reis;
 
   const enter = si === 0 ? 1 : pop(f, s0);
   // vazamento de luz nas trocas de cena
@@ -696,12 +698,6 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
               finger={pc.finger} wiggle={bcur.e === 'confuso' ? 7 : 0} />
           </g>
         </svg>
-        {nameTag && <At x={830} y={1530} s={pop(f, 12)}>
-          <div style={{background: '#2f6fd0', border: `7px solid ${P.INK}`, borderRadius: 18, padding: '4px 22px', textAlign: 'center'}}>
-            <div style={{font: '900 46px Inter', color: '#fff', lineHeight: 1.05}}>DR. BENTO</div>
-            <div style={{font: '900 24px Inter', color: '#FFE11A', letterSpacing: 3}}>ADVOGADO</div>
-          </div>
-        </At>}
       </AbsoluteFill>
       {/* gradação de cor de cinema */}
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(255,150,60,0.10), rgba(0,0,0,0) 40%, rgba(80,30,0,0.18))', mixBlendMode: 'soft-light'}} />
@@ -721,7 +717,7 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
       {data.name === 'youtube' && f >= data.frames - 90 && (
         <div style={{position: 'absolute', left: 0, right: 0, top: 1480, display: 'flex', justifyContent: 'center',
           transform: `scale(${pop(f, data.frames - 90)})`}}>
-          <div style={{background: 'rgba(20,8,2,0.85)', color: '#fff', font: '900 36px Inter', padding: '14px 26px', whiteSpace: 'nowrap',
+          <div style={{background: 'rgba(20,8,2,0.85)', color: '#fff', font: '900 32px Inter', padding: '14px 26px', whiteSpace: 'nowrap',
             borderRadius: 40, border: '4px solid #FFE11A'}}>
             Todo dia uma história real de dinheiro → <span style={{color: '#FFE11A'}}>Inscreva-se</span>
           </div>
