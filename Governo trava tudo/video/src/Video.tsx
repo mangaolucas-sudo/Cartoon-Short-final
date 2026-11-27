@@ -430,7 +430,7 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
       {data.name === 'youtube' && f >= data.frames - 90 && (
         <div style={{position: 'absolute', left: 0, right: 0, top: 640, display: 'flex', justifyContent: 'center',
           transform: `scale(${pop(f, data.frames - 90)})`}}>
-          <div style={{background: 'rgba(20,8,2,0.82)', color: '#fff', font: '900 40px Inter', padding: '14px 28px',
+          <div style={{background: 'rgba(20,8,2,0.82)', color: '#fff', font: '900 36px Inter', padding: '14px 26px', whiteSpace: 'nowrap',
             borderRadius: 40, border: '4px solid #FFE11A'}}>
             Todo dia uma história real de dinheiro → <span style={{color: '#FFE11A'}}>Inscreva-se</span>
           </div>
