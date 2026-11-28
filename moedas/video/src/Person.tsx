@@ -7,7 +7,7 @@ const INK = '#262321';
 const RED = '#e0443a';
 
 export type Spec = {
-  skin: string; hair: 'short' | 'quiff' | 'slick' | 'bald' | 'grey'; hairCol?: string; shirt?: string; emblem?: string;
+  skin: string; hair: 'short' | 'quiff' | 'slick' | 'bald' | 'grey' | 'bun'; hairCol?: string; shirt?: string; emblem?: string;
   pants?: string; shoes?: string; suit?: {jacket: string; tie: string; stripes?: boolean; pocket?: boolean};
   glasses?: boolean; mustache?: boolean; mustacheCol?: string; seed?: number; apron?: string; cap?: string; ref?: 'bento';
 };
@@ -16,6 +16,13 @@ export type Spec = {
 export const BENTO: Spec = {ref: 'bento', skin: '#dba97f', hair: 'slick', hairCol: '#2e1e18',
   suit: {jacket: '#2b3550', tie: RED, stripes: true, pocket: true}, pants: '#2b3550', glasses: true, mustache: true, seed: 2};
 /** repositor do supermercado (personagem de apoio) */
+/** EP "Preço errado": Paulo (protagonista), a operadora de caixa e o gerente */
+export const PAULO: Spec = {skin: '#e8b58c', hair: 'quiff', hairCol: '#3b2416', shirt: '#2c9877', emblem: '#ffd23a',
+  pants: '#355a9c', seed: 3};
+export const CAIXA: Spec = {skin: '#a8714c', hair: 'bun', hairCol: '#2a1a12', shirt: '#e0443a', apron: '#b8302a',
+  pants: '#2b2b33', seed: 7};
+export const GERENTE: Spec = {skin: '#f0c7a0', hair: 'grey', hairCol: '#9a9a9a', suit: {jacket: '#6b4024', tie: '#2f6fd0'},
+  pants: '#6b4024', seed: 9};
 export const REPOSITOR: Spec = {skin: '#f0c39a', hair: 'quiff', hairCol: '#6b3b1d', shirt: '#f4efe4', apron: '#e0662a',
   pants: '#355a9c', seed: 5, cap: '#e0662a'};
 
@@ -91,7 +98,12 @@ const Head: React.FC<{P: Spec; y: number; expr: Face; look: number; t: number; b
             fill={hc} stroke={INK} strokeWidth={9} strokeLinejoin="round" />
           <Line pts={[[x - 30, y - r + 6], [x - 10, y - r * 0.62]]} w={5} col="rgba(255,255,255,0.25)" />
         </>}
-        {(P.hair === 'short' || P.hair === 'quiff') && (() => {
+        {P.hair === 'bun' && <circle cx={x} cy={y - r - 18} r={46} fill={hc} stroke={INK} strokeWidth={9} />}
+        {(P.hair === 'bald' || P.hair === 'grey') && [-1, 1].map((sd) => (
+          <ellipse key={sd} cx={x + sd * (r - 14)} cy={y - 30} rx={26} ry={52} transform={`rotate(${sd * 14} ${x + sd * (r - 14)} ${y - 30})`}
+            fill={P.hair === 'grey' ? '#c9c6c0' : hc} stroke={INK} strokeWidth={7} />
+        ))}
+        {(P.hair === 'short' || P.hair === 'quiff' || P.hair === 'bun') && (() => {
           const R2 = r + 3, b0 = Math.PI * 1.1, b1 = Math.PI * 1.9;
           return <>
             <path d={`M${x + R2 * Math.cos(b0)} ${y + 4 + R2 * Math.sin(b0)} A${R2} ${R2} 0 0 1 ${x + R2 * Math.cos(b1)} ${y + 4 + R2 * Math.sin(b1)}
