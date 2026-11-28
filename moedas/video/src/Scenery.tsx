@@ -575,9 +575,10 @@ const KINDS: Record<string, BG> = {rua: Rua, cosmos: Cosmos, grafica: Grafica, m
   agencia: Agencia, lousa: Lousa, palco: Palco, estudio: Estudio};
 
 /* variantes de câmera: v0 plano geral, v1 plano mais fechado, v2 contra-plano */
-const CAM: Record<number, string> = {0: 'none', 1: 'scale(1.22) translate(-40px, 30px)', 2: 'scale(1.12) translate(60px, -10px)'};
+/* variantes de câmera SEM zoom: só deslocamento lateral/vertical (o cenário tem 200 px de sobra em cada lado) */
+const CAM: Record<number, string> = {0: 'none', 1: 'translate(-150px, 20px)', 2: 'translate(150px, -20px)'};
 const CAMK: Record<string, Record<number, string>> = {
-  rua: {1: 'scale(1.55) translate(-120px, -260px)'},
+  rua: {1: 'translate(-120px, -190px)'},
 };
 
 export const Backdrop: React.FC<{kind: string; v: number; t: number}> = ({kind, v, t}) => {

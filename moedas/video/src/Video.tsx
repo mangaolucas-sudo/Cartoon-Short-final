@@ -534,7 +534,7 @@ const Captions: React.FC<{words: Word[]; t: number}> = ({words, t}) => {
   ch.forEach((w, i) => { if (w.s - lead <= t) wi = i; });
   const clean = (s: string) => s.replace(/[,!:;]/g, '').replace(/\.$/, '').toUpperCase();
   return (
-    <div style={{position: 'absolute', left: 30, right: 30, top: 1350, transform: 'translateY(-50%)', textAlign: 'center',
+    <div style={{position: 'absolute', left: 50, right: 150, top: 1350, transform: 'translateY(-50%)', textAlign: 'center',
       font: '900 94px/1.1 Inter', WebkitTextStroke: '20px #000', paintOrder: 'stroke fill', color: '#fff',
       textShadow: '0 8px 0 rgba(0,0,0,0.5)'}}>
       {ch.map((w, i) => (
@@ -543,18 +543,6 @@ const Captions: React.FC<{words: Word[]; t: number}> = ({words, t}) => {
       ))}
     </div>
   );
-};
-
-/* ---------------- câmera: zoom suave 1.0 ↔ 1.15 ---------------- */
-const zoomAt = (t: number, T: number) => {
-  let n = Math.round(T / 2.5);
-  if (n % 2) n += 1;
-  const seg = T / n;
-  const i = Math.min(n - 1, Math.floor(t / seg));
-  const u = (t - i * seg) / seg;
-  const e = (1 - Math.cos(Math.PI * u)) / 2;
-  const [a, b] = i % 2 === 0 ? [1, 1.15] : [1.15, 1];
-  return a + (b - a) * e;
 };
 
 /* ---------------- camada de cenário com transições ---------------- */
@@ -579,10 +567,10 @@ const BackdropLayer: React.FC<{bgs: BgItem[]; f: number; t: number}> = ({bgs, f,
     );
   }
   // corte seco com "punch" de câmera quando muda só o ângulo
-  const punch = prev && prev.kind === cur.kind ? interpolate(f, [b0, b0 + 7], [1.07, 1], {...clamp, easing: eo}) : 1;
+  // troca de ângulo: corte seco (sem zoom)
   const lt = cur.kind === 'fogos' ? t - cur.at : t;
   return (
-    <AbsoluteFill style={{...style, transform: `scale(${punch})`}}>
+    <AbsoluteFill style={style}>
       <Backdrop kind={cur.kind} v={cur.v} t={lt} />
     </AbsoluteFill>
   );
@@ -620,7 +608,8 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
   small.forEach((a) => { if (vis(f, a, a + 4)) { const k = f - a; sx = [7, -6, 4, -2][k]; sy = [-5, 5, -3, 2][k]; } });
   big.forEach((a) => { if (vis(f, a, a + 6)) { const k = f - a; sx = [22, -18, 14, -10, 6, -3][k]; sy = [-14, 16, -11, 8, -4, 2][k]; } });
 
-  const zoom = zoomAt(t, T);
+  // sem zoom de câmera: o quadro inteiro fica sempre visível no Shorts e no TikTok
+  const zoom = 1;
   const env = Math.min(1, t / 0.6, Math.max(0, (T - 1 / FPS - t)) / 0.6);
 
   // título atual
@@ -656,13 +645,13 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
     R: [a.R[0] + (b.R[0] - a.R[0]) * mixE, a.R[1] + (b.R[1] - a.R[1]) * mixE]});
   let bPose = lerpP(pp.pose, pc.pose);
   let bFace: Face = pc.face;
-  let bx = 800, bWalk: number | null = null;
+  let bx = 760, bWalk: number | null = null;
   // entradas andando
   const walkIns: Record<string, number> = {s2: s0, s6: s0, s7: c.trocar, s8: c.durou, s9: s0};
   const wi = walkIns[sc.id];
   if (wi !== undefined && f >= wi && f < wi + 20) {
     const k = (f - wi) / 20;
-    bx = 1380 - 580 * Easing.out(Easing.quad)(k); bWalk = (f - wi) / 10; bPose = POSES.walk; bFace = 'smile';
+    bx = 1380 - 620 * Easing.out(Easing.quad)(k); bWalk = (f - wi) / 10; bPose = POSES.walk; bFace = 'smile';
   }
   // correndo (salário)
   if (sc.id === 's5' && f >= c.corria && f < c.po) { bWalk = f / 6; bPose = POSES.run; bFace = 'shock'; }
@@ -715,9 +704,9 @@ export const Video: React.FC<{data: Data}> = ({data}) => {
       </AbsoluteFill>
       {head && headS > 0 && <Headline text={head.text} s={headS} />}
       {data.name === 'youtube' && f >= data.frames - 90 && (
-        <div style={{position: 'absolute', left: 0, right: 0, top: 1480, display: 'flex', justifyContent: 'center',
+        <div style={{position: 'absolute', left: 0, right: 120, top: 1480, display: 'flex', justifyContent: 'center',
           transform: `scale(${pop(f, data.frames - 90)})`}}>
-          <div style={{background: 'rgba(20,8,2,0.85)', color: '#fff', font: '900 32px Inter', padding: '14px 26px', whiteSpace: 'nowrap',
+          <div style={{background: 'rgba(20,8,2,0.85)', color: '#fff', font: '900 29px Inter', padding: '12px 22px', whiteSpace: 'nowrap',
             borderRadius: 40, border: '4px solid #FFE11A'}}>
             Todo dia uma história real de dinheiro → <span style={{color: '#FFE11A'}}>Inscreva-se</span>
           </div>

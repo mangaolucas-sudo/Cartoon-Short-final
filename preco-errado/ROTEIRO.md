@@ -96,7 +96,7 @@ Na semana seguinte, o Paulo voltou no mercado. E olhou de novo pra etiqueta.
 ## 4. Cenas (sincronizadas pelo início de cada frase)
 
 Personagens: **Dr. Bento** (padrão do canal), **Paulo**, **operadora de caixa** e **gerente**. Veja `personagens/PERSONAGENS.md`.
-Tudo no mesmo estilo do vídeo da moeda: Remotion, cenários que trocam a cada 2–4 s, legenda palavra por palavra (até 3 palavras, palavra atual em amarelo, y≈1350), textos com "pop" no terço superior e paleta laranja/marrom.
+Tudo no mesmo estilo do vídeo da moeda, **sem zoom** e dentro da área visível do Shorts e do TikTok (veja `PADRAO_VIDEO.md`): Remotion, cenários que trocam a cada 2–4 s, legenda palavra por palavra (até 3 palavras, palavra atual em amarelo, y≈1350), textos com "pop" no terço superior e paleta laranja/marrom.
 
 | # | Fala (início) | Visual | Texto no topo | Som |
 |---|---|---|---|---|
